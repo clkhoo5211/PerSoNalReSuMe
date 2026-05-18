@@ -70,18 +70,41 @@ export default function Hero() {
 
         <motion.div
           className="hero-visual"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.25, ease: 'easeOut' }}
         >
-          <div className="avatar-ring">
-            <div className="avatar-inner">
-              <span className="avatar-emoji">👨‍💻</span>
+          <div className="hero-glow" />
+          <div className="hero-terminal">
+            <div className="terminal-titlebar">
+              <div className="terminal-dot dot-red" />
+              <div className="terminal-dot dot-yellow" />
+              <div className="terminal-dot dot-green" />
+              <span className="terminal-title">portfolio.ts</span>
             </div>
+            <div className="terminal-body">
+              <div className="t-comment">// Building the future, one commit at a time</div>
+              <div><span className="t-keyword">const </span><span className="t-fn">developer</span> = {'{'}</div>
+              <div className="t-indent"><span className="t-prop">name</span>: <span className="t-string">"{profile.name}"</span>,</div>
+              <div className="t-indent"><span className="t-prop">role</span>: <span className="t-string">"{profile.title}"</span>,</div>
+              <div className="t-indent"><span className="t-prop">stack</span>: [</div>
+              <div className="t-indent2"><span className="t-string">"React"</span>, <span className="t-string">"Node.js"</span>,</div>
+              <div className="t-indent2"><span className="t-string">"Solidity"</span>, <span className="t-string">"Python"</span>,</div>
+              <div className="t-indent2"><span className="t-string">"AWS"</span>, <span className="t-string">"AI/ML"</span></div>
+              <div className="t-indent">],</div>
+              <div className="t-indent"><span className="t-prop">available</span>: <span className="t-value">true</span>,</div>
+              <div className="t-indent"><span className="t-prop">coffee</span>: <span className="t-value">Infinity</span>,</div>
+              {'}'}</div>
           </div>
-          <div className="floating-badge badge-1">🤖 AI</div>
-          <div className="floating-badge badge-2">⛓️ Web3</div>
-          <div className="floating-badge badge-3">☁️ Cloud</div>
+          <div className="floating-badge badge-1">
+            <span className="badge-icon">🤖</span> AI Engineer
+          </div>
+          <div className="floating-badge badge-2">
+            <span className="badge-icon">✓</span> Open to Work
+          </div>
+          <div className="floating-badge badge-3">
+            <span className="badge-icon">⛓️</span> Web3 Dev
+          </div>
         </motion.div>
       </div>
     </section>
