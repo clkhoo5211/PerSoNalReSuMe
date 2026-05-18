@@ -21,7 +21,7 @@ export const profile = {
   links: [
     { label: 'View Projects',     url: '#projects', icon: '🚀', primary: true },
     { label: 'Read Blog',         url: '#blog',     icon: '✍️' },
-    { label: 'Download Resume',   url: '/PerSoNalReSuMe/KCL_CV_Resume_v1_corrected.pdf', icon: '📄' },
+    { label: 'Download Resume',   url: '/PerSoNalReSuMe/KCL_Resume.pdf', icon: '📄' },
     { label: 'Book a Call',       url: '#contact',  icon: '📞' },
     { label: 'GitHub Profile',    url: 'https://github.com/clkhoo5211',             icon: '🐙' },
     { label: 'LinkedIn',          url: 'https://www.linkedin.com/in/khoochenglong/', icon: '💼' },
