@@ -1,1 +1,22 @@
-[]
+[
+  {"id":"43901","title":"OpenAI releases GPT-5 with improved reasoning and multimodal capabilities","url":"https://news.ycombinator.com/item?id=43901","source":"HackerNews","points":842,"time":"2026-05-18T08:00:00Z"},
+  {"id":"43902","title":"Google DeepMind's AlphaFold 3 predicts protein interactions with unprecedented accuracy","url":"https://news.ycombinator.com/item?id=43902","source":"HackerNews","points":631,"time":"2026-05-18T06:30:00Z"},
+  {"id":"43903","title":"Anthropic publishes new alignment research on constitutional AI methods","url":"https://news.ycombinator.com/item?id=43903","source":"HackerNews","points":518,"time":"2026-05-17T22:00:00Z"},
+  {"id":"43904","title":"Meta releases Llama 4 open-source model outperforming GPT-4 on benchmarks","url":"https://news.ycombinator.com/item?id=43904","source":"HackerNews","points":974,"time":"2026-05-17T18:45:00Z"},
+  {"id":"43905","title":"Mistral AI launches new code generation model with 128k context window","url":"https://news.ycombinator.com/item?id=43905","source":"HackerNews","points":387,"time":"2026-05-17T15:00:00Z"},
+  {"id":"43906","title":"Stanford researchers achieve breakthrough in AI-driven drug discovery pipeline","url":"https://news.ycombinator.com/item?id=43906","source":"HackerNews","points":445,"time":"2026-05-17T12:00:00Z"},
+  {"id":"43907","title":"AI coding assistants now write 40% of code at major tech companies — new survey","url":"https://news.ycombinator.com/item?id=43907","source":"HackerNews","points":762,"time":"2026-05-17T09:30:00Z"},
+  {"id":"43908","title":"EU AI Act enforcement begins: companies race to comply with transparency rules","url":"https://news.ycombinator.com/item?id=43908","source":"HackerNews","points":529,"time":"2026-05-16T20:00:00Z"},
+  {"id":"43909","title":"Robotics startup raises $500M to deploy AI-powered warehouse automation","url":"https://news.ycombinator.com/item?id=43909","source":"HackerNews","points":312,"time":"2026-05-16T16:00:00Z"},
+  {"id":"43910","title":"Show HN: I built a local AI assistant that runs entirely on-device with no cloud","url":"https://news.ycombinator.com/item?id=43910","source":"HackerNews","points":1204,"time":"2026-05-16T14:00:00Z"},
+  {"id":"43911","title":"MIT study: AI tutors outperform human tutors in personalized math instruction","url":"https://news.ycombinator.com/item?id=43911","source":"HackerNews","points":688,"time":"2026-05-16T10:30:00Z"},
+  {"id":"43912","title":"Nvidia announces next-gen Blackwell Ultra GPU optimized for AI inference at scale","url":"https://news.ycombinator.com/item?id=43912","source":"HackerNews","points":891,"time":"2026-05-15T22:00:00Z"},
+  {"id":"43913","title":"Ask HN: What are the best practices for fine-tuning LLMs on proprietary data?","url":"https://news.ycombinator.com/item?id=43913","source":"HackerNews","points":276,"time":"2026-05-15T18:00:00Z"},
+  {"id":"43914","title":"OpenAI Sora video generation model now available to all ChatGPT Plus users","url":"https://news.ycombinator.com/item?id=43914","source":"HackerNews","points":543,"time":"2026-05-15T14:00:00Z"},
+  {"id":"43915","title":"Researchers develop AI that detects cancer from a single blood test with 95% accuracy","url":"https://news.ycombinator.com/item?id=43915","source":"HackerNews","points":1087,"time":"2026-05-15T10:00:00Z"},
+  {"id":"43916","title":"The future of AI agents: how autonomous systems are reshaping software development","url":"https://news.ycombinator.com/item?id=43916","source":"HackerNews","points":429,"time":"2026-05-14T20:00:00Z"},
+  {"id":"43917","title":"xAI Grok 3 claims state-of-the-art performance on MMLU and coding benchmarks","url":"https://news.ycombinator.com/item?id=43917","source":"HackerNews","points":334,"time":"2026-05-14T16:00:00Z"},
+  {"id":"43918","title":"AI-generated music platform Suno reaches 10M monthly active creators","url":"https://news.ycombinator.com/item?id=43918","source":"HackerNews","points":218,"time":"2026-05-14T12:00:00Z"},
+  {"id":"43919","title":"Waymo expands robotaxi service to 10 new US cities after safety milestone","url":"https://news.ycombinator.com/item?id=43919","source":"HackerNews","points":677,"time":"2026-05-14T08:00:00Z"},
+  {"id":"43920","title":"Why I switched from LangChain to building my own LLM pipeline from scratch","url":"https://news.ycombinator.com/item?id=43920","source":"HackerNews","points":956,"time":"2026-05-13T20:00:00Z"}
+]
