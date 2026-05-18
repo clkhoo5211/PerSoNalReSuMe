@@ -6,10 +6,10 @@ import './MediaPlayer.css';
 const DEFAULT_TRACKS = [
   {
     id: 'ambient-1',
-    title: 'Ambient Background',
-    artist: 'Portfolio Vibes',
+    title: '背景音樂',
+    artist: 'Khoo Cheng Long',
     type: 'audio',
-    src: null,
+    src: '/PerSoNalReSuMe/music/background.mp3',
     cover: null,
   },
 ];
