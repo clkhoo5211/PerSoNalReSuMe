@@ -58,10 +58,10 @@ export default function Hero() {
           <p className="hero-bio">{profile.bio}</p>
           <div className="hero-cta">
             <MagneticButton>
-              <a href="#projects" className="btn btn-primary">View Projects</a>
+              <button className="btn btn-primary" onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}>View Projects</button>
             </MagneticButton>
             <MagneticButton>
-              <a href="#contact" className="btn btn-outline">Get In Touch</a>
+              <button className="btn btn-outline" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>Get In Touch</button>
             </MagneticButton>
           </div>
           <div className="hero-social">
