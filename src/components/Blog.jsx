@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { posts } from '../data/blog';
 import Modal from './Modal';
@@ -40,6 +41,7 @@ export default function Blog() {
               <div className="blog-tags">
                 {post.tags.map(t => <span key={t} className="tag tag-secondary">{t}</span>)}
               </div>
+              <Link to={`/blog/${post.id}`} className="blog-read-more" onClick={e => e.stopPropagation()}>Read More →</Link>
             </motion.article>
           ))}
         </div>

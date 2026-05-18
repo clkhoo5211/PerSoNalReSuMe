@@ -1,15 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import GiscusComments from './GiscusComments';
 import './MediaPlayer.css';
 
-// Default tracks — replace src with real URLs or hosted files
 const DEFAULT_TRACKS = [
   {
     id: 'ambient-1',
     title: 'Ambient Background',
     artist: 'Portfolio Vibes',
     type: 'audio',
-    src: null, // will be replaced by user upload
+    src: null,
     cover: null,
   },
 ];
@@ -30,9 +30,11 @@ export default function MediaPlayer() {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [minimized, setMinimized] = useState(true);
-  const [mode, setMode] = useState('audio'); // 'audio' | 'video'
-  const [showUpload, setShowUpload] = useState(false);
-  const [autoplay, setAutoplay] = useState(false);
+  const [mode, setMode] = useState('audio');
+  const [tab, setTab] = useState('player'); // 'player' | 'comments'
+  const [likes, setLikes] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('mp-likes') || '{}'); } catch { return {}; }
+  });
 
   const audioRef = useRef(null);
   const videoRef = useRef(null);
@@ -41,7 +43,6 @@ export default function MediaPlayer() {
   const current = tracks[currentIndex] || null;
   const mediaRef = mode === 'video' ? videoRef : audioRef;
 
-  // Sync volume / mute
   useEffect(() => {
     const el = mediaRef.current;
     if (!el) return;
@@ -49,7 +50,6 @@ export default function MediaPlayer() {
     el.muted = muted;
   }, [volume, muted, mode]);
 
-  // Play/pause
   useEffect(() => {
     const el = mediaRef.current;
     if (!el || !current?.src) return;
@@ -65,19 +65,15 @@ export default function MediaPlayer() {
   };
 
   const handleEnded = () => {
-    if (currentIndex < tracks.length - 1) {
-      setCurrentIndex(i => i + 1);
-    } else {
-      setPlaying(false);
-    }
+    if (currentIndex < tracks.length - 1) setCurrentIndex(i => i + 1);
+    else setPlaying(false);
   };
 
   const seek = (e) => {
     const el = mediaRef.current;
     if (!el || !duration) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    const ratio = (e.clientX - rect.left) / rect.width;
-    el.currentTime = ratio * duration;
+    el.currentTime = ((e.clientX - rect.left) / rect.width) * duration;
   };
 
   const handleFileUpload = (e) => {
@@ -94,17 +90,31 @@ export default function MediaPlayer() {
     if (newTracks.length > 0) {
       setCurrentIndex(tracks.filter(t => t.src).length);
       setMode(newTracks[0].type);
-      setShowUpload(false);
+    }
+  };
+
+  const toggleLike = (trackId) => {
+    setLikes(prev => {
+      const next = { ...prev, [trackId]: !prev[trackId] };
+      localStorage.setItem('mp-likes', JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const shareTrack = () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      navigator.share({ title: current?.title, url }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(url);
     }
   };
 
   const progressPct = duration ? (progress / duration) * 100 : 0;
-
   if (!current) return null;
 
   return (
     <>
-      {/* Floating mini-player button */}
       <button
         className="media-fab"
         onClick={() => setMinimized(m => !m)}
@@ -126,162 +136,123 @@ export default function MediaPlayer() {
           >
             {/* Header */}
             <div className="mp-header">
-              <span className="mp-title">Media Player</span>
-              <div className="mp-header-actions">
-                <button
-                  className={`mp-icon-btn${autoplay ? ' active' : ''}`}
-                  onClick={() => setAutoplay(a => !a)}
-                  title="Autoplay on visit"
-                >🔁</button>
-                <button className="mp-icon-btn" onClick={() => setMinimized(true)} title="Minimize">—</button>
+              <div className="mp-tabs">
+                <button className={`mp-tab${tab === 'player' ? ' active' : ''}`} onClick={() => setTab('player')}>Player</button>
+                <button className={`mp-tab${tab === 'comments' ? ' active' : ''}`} onClick={() => setTab('comments')}>💬 Comments</button>
               </div>
+              <button className="mp-icon-btn" onClick={() => setMinimized(true)} title="Minimize">—</button>
             </div>
 
-            {/* Video area */}
-            {mode === 'video' && current.src && (
-              <div className="mp-video-wrap">
-                <video
-                  ref={videoRef}
-                  src={current.src}
-                  onTimeUpdate={handleTimeUpdate}
-                  onEnded={handleEnded}
-                  onLoadedMetadata={handleTimeUpdate}
-                  className="mp-video"
-                  playsInline
-                />
-              </div>
-            )}
+            {tab === 'player' && (
+              <>
+                {mode === 'video' && current.src && (
+                  <div className="mp-video-wrap">
+                    <video ref={videoRef} src={current.src} onTimeUpdate={handleTimeUpdate}
+                      onEnded={handleEnded} onLoadedMetadata={handleTimeUpdate}
+                      className="mp-video" playsInline />
+                  </div>
+                )}
 
-            {/* Hidden audio element */}
-            <audio
-              ref={audioRef}
-              src={mode === 'audio' ? current.src || '' : ''}
-              onTimeUpdate={handleTimeUpdate}
-              onEnded={handleEnded}
-              onLoadedMetadata={handleTimeUpdate}
-              preload="metadata"
-            />
+                <audio ref={audioRef} src={mode === 'audio' ? current.src || '' : ''}
+                  onTimeUpdate={handleTimeUpdate} onEnded={handleEnded}
+                  onLoadedMetadata={handleTimeUpdate} preload="metadata" />
 
-            {/* Track info */}
-            <div className="mp-track-info">
-              <div className="mp-cover">
-                {current.cover
-                  ? <img src={current.cover} alt={current.title} />
-                  : <span>{mode === 'video' ? '🎬' : '🎵'}</span>
-                }
-              </div>
-              <div className="mp-meta">
-                <div className="mp-track-name">{current.title}</div>
-                <div className="mp-track-artist">{current.artist}</div>
-              </div>
-              <div className="mp-mode-btns">
-                <button
-                  className={`mp-icon-btn${mode === 'audio' ? ' active' : ''}`}
-                  onClick={() => setMode('audio')}
-                  title="Audio mode"
-                >🎵</button>
-                <button
-                  className={`mp-icon-btn${mode === 'video' ? ' active' : ''}`}
-                  onClick={() => setMode('video')}
-                  title="Video mode"
-                >🎬</button>
-              </div>
-            </div>
+                {/* Track info + social actions */}
+                <div className="mp-track-info">
+                  <div className="mp-cover">
+                    {current.cover ? <img src={current.cover} alt={current.title} /> : <span>{mode === 'video' ? '🎬' : '🎵'}</span>}
+                  </div>
+                  <div className="mp-meta">
+                    <div className="mp-track-name">{current.title}</div>
+                    <div className="mp-track-artist">{current.artist}</div>
+                  </div>
+                  <div className="mp-social-actions">
+                    <button
+                      className={`mp-icon-btn mp-like-btn${likes[current.id] ? ' liked' : ''}`}
+                      onClick={() => toggleLike(current.id)}
+                      title="Like"
+                    >
+                      {likes[current.id] ? '❤️' : '🤍'}
+                    </button>
+                    <button className="mp-icon-btn" onClick={shareTrack} title="Share / Copy link">
+                      🔗
+                    </button>
+                    <button className={`mp-icon-btn${tab === 'comments' ? ' active' : ''}`}
+                      onClick={() => setTab('comments')} title="Comments">
+                      💬
+                    </button>
+                  </div>
+                </div>
 
-            {/* Progress bar */}
-            <div className="mp-progress-wrap" onClick={seek}>
-              <div className="mp-progress-bg">
-                <div className="mp-progress-fill" style={{ width: `${progressPct}%` }} />
-              </div>
-              <div className="mp-times">
-                <span>{formatTime(progress)}</span>
-                <span>{formatTime(duration)}</span>
-              </div>
-            </div>
+                {/* Progress */}
+                <div className="mp-progress-wrap" onClick={seek}>
+                  <div className="mp-progress-bg">
+                    <div className="mp-progress-fill" style={{ width: `${progressPct}%` }} />
+                  </div>
+                  <div className="mp-times">
+                    <span>{formatTime(progress)}</span>
+                    <span>{formatTime(duration)}</span>
+                  </div>
+                </div>
 
-            {/* Controls */}
-            <div className="mp-controls">
-              <button
-                className="mp-icon-btn"
-                onClick={() => setCurrentIndex(i => Math.max(0, i - 1))}
-                disabled={currentIndex === 0}
-                title="Previous"
-              >⏮</button>
-
-              <button
-                className="mp-play-btn"
-                onClick={() => {
-                  if (!current.src) { setShowUpload(true); return; }
-                  setPlaying(p => !p);
-                }}
-                title={playing ? 'Pause' : 'Play'}
-              >
-                {playing ? '⏸' : '▶'}
-              </button>
-
-              <button
-                className="mp-icon-btn"
-                onClick={() => setCurrentIndex(i => Math.min(tracks.length - 1, i + 1))}
-                disabled={currentIndex >= tracks.length - 1}
-                title="Next"
-              >⏭</button>
-
-              <button
-                className={`mp-icon-btn${muted ? ' active' : ''}`}
-                onClick={() => setMuted(m => !m)}
-                title={muted ? 'Unmute' : 'Mute'}
-              >
-                {muted ? '🔇' : '🔊'}
-              </button>
-
-              <input
-                type="range"
-                className="mp-volume"
-                min={0}
-                max={1}
-                step={0.05}
-                value={muted ? 0 : volume}
-                onChange={e => { setVolume(Number(e.target.value)); setMuted(false); }}
-                title="Volume"
-              />
-            </div>
-
-            {/* Track list */}
-            {tracks.filter(t => t.src).length > 0 && (
-              <div className="mp-tracklist">
-                {tracks.filter(t => t.src).map((t, i) => (
-                  <button
-                    key={t.id}
-                    className={`mp-track-row${i === currentIndex ? ' active' : ''}`}
-                    onClick={() => { setCurrentIndex(i); setPlaying(true); }}
-                  >
-                    <span className="mp-track-row-icon">{t.type === 'video' ? '🎬' : '🎵'}</span>
-                    <span className="mp-track-row-name">{t.title}</span>
-                    {i === currentIndex && playing && <span className="mp-playing-dot" />}
+                {/* Controls */}
+                <div className="mp-controls">
+                  <button className="mp-icon-btn" onClick={() => setCurrentIndex(i => Math.max(0, i - 1))}
+                    disabled={currentIndex === 0} title="Previous">⏮</button>
+                  <button className="mp-play-btn"
+                    onClick={() => { if (!current.src) { fileInputRef.current?.click(); return; } setPlaying(p => !p); }}
+                    title={playing ? 'Pause' : 'Play'}>
+                    {playing ? '⏸' : '▶'}
                   </button>
-                ))}
-              </div>
+                  <button className="mp-icon-btn" onClick={() => setCurrentIndex(i => Math.min(tracks.length - 1, i + 1))}
+                    disabled={currentIndex >= tracks.length - 1} title="Next">⏭</button>
+                  <button className={`mp-icon-btn${muted ? ' active' : ''}`} onClick={() => setMuted(m => !m)}
+                    title={muted ? 'Unmute' : 'Mute'}>{muted ? '🔇' : '🔊'}</button>
+                  <input type="range" className="mp-volume" min={0} max={1} step={0.05}
+                    value={muted ? 0 : volume}
+                    onChange={e => { setVolume(Number(e.target.value)); setMuted(false); }} title="Volume" />
+                </div>
+
+                {/* Mode toggle */}
+                <div className="mp-mode-row">
+                  <button className={`mp-icon-btn${mode === 'audio' ? ' active' : ''}`} onClick={() => setMode('audio')}>🎵 Audio</button>
+                  <button className={`mp-icon-btn${mode === 'video' ? ' active' : ''}`} onClick={() => setMode('video')}>🎬 Video</button>
+                </div>
+
+                {/* Track list */}
+                {tracks.filter(t => t.src).length > 0 && (
+                  <div className="mp-tracklist">
+                    {tracks.filter(t => t.src).map((t, i) => (
+                      <button key={t.id} className={`mp-track-row${i === currentIndex ? ' active' : ''}`}
+                        onClick={() => { setCurrentIndex(i); setPlaying(true); }}>
+                        <span className="mp-track-row-icon">{t.type === 'video' ? '🎬' : '🎵'}</span>
+                        <span className="mp-track-row-name">{t.title}</span>
+                        {i === currentIndex && playing && <span className="mp-playing-dot" />}
+                        {likes[t.id] && <span style={{ marginLeft: 'auto', fontSize: 11 }}>❤️</span>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <button className="mp-upload-btn btn btn-outline" onClick={() => fileInputRef.current?.click()}>
+                  📁 Upload MP3 / MP4
+                </button>
+                <input ref={fileInputRef} type="file" accept="audio/*,video/*" multiple
+                  onChange={handleFileUpload} style={{ display: 'none' }} />
+
+                {!current.src && (
+                  <p className="mp-no-track">No track loaded — upload an MP3 or MP4 to get started.</p>
+                )}
+              </>
             )}
 
-            {/* Upload button */}
-            <button
-              className="mp-upload-btn btn btn-outline"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              📁 Upload MP3 / MP4
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="audio/*,video/*"
-              multiple
-              onChange={handleFileUpload}
-              style={{ display: 'none' }}
-            />
-
-            {/* No-track placeholder */}
-            {!current.src && !showUpload && (
-              <p className="mp-no-track">No track loaded — upload an MP3 or MP4 to get started.</p>
+            {tab === 'comments' && (
+              <div className="mp-comments-panel">
+                <p className="mp-comments-label">
+                  Leave a comment or reaction about the music / this portfolio:
+                </p>
+                <GiscusComments term={`music-player-${current?.id || 'general'}`} />
+              </div>
             )}
           </motion.div>
         )}

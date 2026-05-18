@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
+    "@giscus/react": "^3.1.0",
     "@remotion/player": "^4.0.462",
     "axios": "^1.16.1",
     "embla-carousel-react": "^8.6.0",
@@ -17,6 +19,7 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-parallax-tilt": "^1.7.328",
+    "react-router-dom": "^7.15.1",
     "remotion": "^4.0.462",
     "swiper": "^12.1.4",
     "swr": "^2.4.1"

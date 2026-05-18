@@ -6,3 +6,5 @@
 .blog-summary { font-size: 14px; color: var(--text-muted); margin-bottom: var(--space-sm); }
 .blog-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .blog-modal-meta { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+.blog-read-more { font-size:12px; font-weight:700; color:var(--primary); background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.2); border-radius:999px; padding:5px 14px; text-decoration:none; transition:all .2s; display:inline-block; margin-top:4px; }
+.blog-read-more:hover { background:rgba(56,189,248,0.15); border-color:var(--primary); }

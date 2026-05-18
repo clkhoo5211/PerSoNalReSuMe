@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import Tilt from 'react-parallax-tilt';
 import { Player } from '@remotion/player';
 import ProjectAnimation from './remotion/ProjectAnimation';
@@ -72,6 +73,14 @@ export default function ProjectCard({ project, index }) {
                   <span key={t} className="tag tag-secondary">{t}</span>
                 ))}
                 {project.tech.length > 4 && <span className="tag">+{project.tech.length - 4}</span>}
+              </div>
+              <div className="project-footer">
+                <button className="project-modal-btn" onClick={e => { e.stopPropagation(); setOpen(true); }}>
+                  Quick View
+                </button>
+                <Link to={`/projects/${project.id}`} className="project-detail-btn" onClick={e => e.stopPropagation()}>
+                  View Details →
+                </Link>
               </div>
             </div>
           </article>
