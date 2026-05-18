@@ -1151,73 +1151,156 @@ function drawSuperApp(ctx, w, h, t) {
  * NEW-7. NEWS APP MCP — AI agent fetch → summarise → alert  *
  * ────────────────────────────────────────────────────────── */
 function drawNewsMCP(ctx, w, h, t) {
-  const bg=ctx.createLinearGradient(0,0,w,h);
-  bg.addColorStop(0,'#060518'); bg.addColorStop(1,'#0d0a28');
-  ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+  // ── deep space bg ──
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#03001e'); bg.addColorStop(0.5, '#07041a'); bg.addColorStop(1, '#0d0630');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
 
-  // MCP pipeline: Fetch → Analyse → Summarise → Alert
-  const steps=[
-    {label:'FETCH',   color:'#38bdf8', icon:'🌐'},
-    {label:'ANALYSE', color:'#a78bfa', icon:'🔍'},
-    {label:'SUMMARY', color:'#34d399', icon:'✍️'},
-    {label:'ALERT',   color:'#fb923c', icon:'🔔'},
+  // ── scanline overlay ──
+  for (let y = 0; y < h; y += 3) {
+    ctx.fillStyle = 'rgba(0,0,0,0.08)';
+    ctx.fillRect(0, y, w, 1);
+  }
+
+  // ── neural network background (nodes + edges) ──
+  const nodes = [
+    {x:w*0.12,y:h*0.22},{x:w*0.35,y:h*0.15},{x:w*0.6,y:h*0.18},
+    {x:w*0.85,y:h*0.25},{x:w*0.08,y:h*0.5},{x:w*0.28,y:h*0.45},
+    {x:w*0.52,y:h*0.42},{x:w*0.75,y:h*0.48},{x:w*0.92,y:h*0.55},
+    {x:w*0.18,y:h*0.72},{x:w*0.45,y:h*0.7},{x:w*0.7,y:h*0.75},
   ];
-  const activeStep=Math.floor((t*0.01)%steps.length);
-  const sw=(w-20)/steps.length;
-  steps.forEach((s,i)=>{
-    const sx=10+i*sw, sy=14;
-    const active=i===activeStep;
-    const pulse=active?0.8+0.2*Math.sin(t*0.12):0.4;
-    ctx.shadowColor=s.color; ctx.shadowBlur=active?14:4;
-    roundRect(ctx,sx+3,sy,sw-6,36,6);
-    ctx.fillStyle=active?`${s.color}20`:`rgba(255,255,255,0.03)`; ctx.fill();
-    ctx.strokeStyle=`${s.color}${Math.floor(pulse*180).toString(16).padStart(2,'0')}`; ctx.lineWidth=active?1.5:0.7; ctx.stroke();
-    ctx.shadowBlur=0;
-    ctx.font='12px sans-serif'; ctx.textAlign='center';
-    ctx.fillText(s.icon,sx+sw/2,sy+18);
-    ctx.fillStyle=active?s.color:'rgba(148,163,184,0.4)'; ctx.font=`${active?'bold ':''}6px monospace`;
-    ctx.fillText(s.label,sx+sw/2,sy+32);
-    if(i<steps.length-1){
-      const dotT=((t*0.01+0.001)%steps.length-i);
-      if(dotT>0&&dotT<1){
-        const dpx=sx+sw-6+dotT*8, dpy=sy+18;
-        ctx.beginPath(); ctx.arc(dpx,dpy,2.5,0,Math.PI*2);
-        ctx.fillStyle=s.color; ctx.fill();
-      }
+  const edges = [[0,1],[1,2],[2,3],[4,5],[5,6],[6,7],[7,8],[0,4],[1,5],[2,6],[3,7],[4,9],[5,10],[6,10],[7,11],[9,10],[10,11]];
+  // draw edges with travelling packet
+  edges.forEach(([a,b],ei) => {
+    const na=nodes[a], nb=nodes[b];
+    const grad = ctx.createLinearGradient(na.x,na.y,nb.x,nb.y);
+    grad.addColorStop(0,'rgba(56,189,248,0.06)'); grad.addColorStop(1,'rgba(167,139,250,0.06)');
+    ctx.strokeStyle=grad; ctx.lineWidth=0.6;
+    ctx.beginPath(); ctx.moveTo(na.x,na.y); ctx.lineTo(nb.x,nb.y); ctx.stroke();
+    // packet
+    const pf = ((t*0.008 + ei*0.17) % 1);
+    const px = na.x + (nb.x-na.x)*pf, py = na.y + (nb.y-na.y)*pf;
+    ctx.beginPath(); ctx.arc(px,py,1.5,0,Math.PI*2);
+    ctx.fillStyle=`rgba(167,139,250,${0.4+0.4*Math.sin(t*0.1+ei)})`; ctx.fill();
+  });
+  // draw nodes
+  nodes.forEach((n,ni) => {
+    const pulse = 0.5 + 0.5*Math.sin(t*0.07 + ni*0.8);
+    ctx.beginPath(); ctx.arc(n.x,n.y,3+pulse,0,Math.PI*2);
+    const ng = ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,5+pulse);
+    ng.addColorStop(0,'rgba(167,139,250,0.9)'); ng.addColorStop(1,'rgba(56,189,248,0)');
+    ctx.fillStyle=ng; ctx.fill();
+    ctx.beginPath(); ctx.arc(n.x,n.y,1.5,0,Math.PI*2);
+    ctx.fillStyle='rgba(200,180,255,0.95)'; ctx.fill();
+  });
+
+  // ── MCP pipeline header ──
+  const steps=[
+    {label:'FETCH',   color:'#38bdf8', sym:'⬇'},
+    {label:'PARSE',   color:'#818cf8', sym:'◈'},
+    {label:'ANALYSE', color:'#a78bfa', sym:'⬡'},
+    {label:'BRIEF',   color:'#34d399', sym:'▶'},
+    {label:'ALERT',   color:'#fb923c', sym:'◉'},
+  ];
+  const pipeY = 14, pipeH = 28;
+  const sw = (w - 16) / steps.length;
+  const activeStep = Math.floor((t * 0.009) % steps.length);
+  steps.forEach((s, i) => {
+    const sx = 8 + i * sw;
+    const active = i === activeStep;
+    const glow = active ? 0.75 + 0.25*Math.sin(t*0.18) : 0.25;
+    // pipe segment bg
+    roundRect(ctx, sx+1, pipeY, sw-2, pipeH, 5);
+    ctx.fillStyle = active ? `${s.color}18` : 'rgba(255,255,255,0.02)'; ctx.fill();
+    ctx.strokeStyle = active ? s.color : `${s.color}40`; ctx.lineWidth = active ? 1.2 : 0.5; ctx.stroke();
+    // label
+    ctx.fillStyle = active ? s.color : `${s.color}70`;
+    ctx.font = `${active ? 'bold ' : ''}5.5px monospace`; ctx.textAlign = 'center';
+    ctx.fillText(s.sym + ' ' + s.label, sx + sw/2, pipeY + pipeH/2 + 2);
+    // connector arrow
+    if (i < steps.length-1) {
+      const ax = sx + sw - 1, ay = pipeY + pipeH/2;
+      const pkt = ((t*0.009 + i*0.2) % 1); // packet along connector
+      const pkx = ax + pkt * 2;
+      ctx.beginPath(); ctx.arc(pkx, ay, 1.8, 0, Math.PI*2);
+      ctx.fillStyle = `${s.color}${Math.floor(glow*200).toString(16).padStart(2,'0')}`; ctx.fill();
+    }
+    // active glow ring
+    if (active) {
+      ctx.strokeStyle = `${s.color}40`; ctx.lineWidth = 3;
+      roundRect(ctx, sx+1, pipeY, sw-2, pipeH, 5); ctx.stroke();
     }
   });
 
-  // news feed cards
-  const headlines=[
-    {src:'BBC',   text:'AI Regulation Bill passes Senate...', tag:'TECH',  color:'#38bdf8'},
-    {src:'CNA',   text:'BTC surges past $80K resistance...', tag:'CRYPTO', color:'#facc15'},
-    {src:'CNBC',  text:'Fed holds rates, markets react...', tag:'FINANCE',color:'#34d399'},
+  // ── live news feed ──
+  const headlines = [
+    {src:'BBC',  color:'#ef4444', text:'AI Regulation Bill passes first Senate vote...'},
+    {src:'CNA',  color:'#facc15', text:'BTC breaks $90K — is $100K next? Analysts weigh in...'},
+    {src:'CNBC', color:'#34d399', text:'Fed signals rate cuts — equities surge to record high...'},
+    {src:'WSJ',  color:'#818cf8', text:'OpenAI launches real-time news summarisation API...'},
+    {src:'RT',   color:'#fb923c', text:'Southeast Asia leads global fintech adoption wave...'},
   ];
-  headlines.forEach((n,i)=>{
-    const ny=58+i*34;
-    const slideT=clamp(t*0.012-i*0.25,0,1);
-    const ox=(1-easeInOut(slideT))*w;
-    ctx.fillStyle='rgba(255,255,255,0.04)';
-    roundRect(ctx,10+ox,ny,w-20,28,5); ctx.fill();
-    ctx.strokeStyle=`${n.color}30`; ctx.lineWidth=0.8;
-    roundRect(ctx,10+ox,ny,w-20,28,5); ctx.stroke();
-    // source badge
-    roundRect(ctx,14+ox,ny+6,24,14,3);
-    ctx.fillStyle=`${n.color}25`; ctx.fill();
-    ctx.fillStyle=n.color; ctx.font='bold 6px monospace'; ctx.textAlign='center';
-    ctx.fillText(n.src,26+ox,ny+16);
-    // headline
-    ctx.fillStyle='rgba(255,255,255,0.75)'; ctx.font='6.5px Inter'; ctx.textAlign='left';
-    ctx.fillText(n.text.slice(0,36),42+ox,ny+12);
-    // AI badge
-    ctx.fillStyle='rgba(167,139,250,0.2)';
-    roundRect(ctx,w-50+ox,ny+6,38,14,3); ctx.fill();
-    ctx.fillStyle='#a78bfa'; ctx.font='bold 5px monospace'; ctx.textAlign='center';
-    ctx.fillText('✨ AI BRIEF',w-31+ox,ny+15);
-  });
+  // scroll ticker: 5 cards, each 32px tall, scroll continuously
+  const cardH = 32, feedY = 48, feedH = h - feedY - 22;
+  const totalH = headlines.length * cardH;
+  const scroll = (t * 0.35) % totalH;
+  ctx.save(); ctx.rect(0, feedY, w, feedH); ctx.clip();
+  for (let rep = -1; rep <= 1; rep++) {
+    headlines.forEach((n, i) => {
+      const ny = feedY + i * cardH - scroll + rep * totalH;
+      if (ny + cardH < feedY - 2 || ny > feedY + feedH + 2) return;
+      // fade at edges
+      const dy = ny - feedY, alpha = Math.min(1, Math.min(dy / 18, (feedY + feedH - ny) / 18));
+      if (alpha <= 0) return;
+      ctx.globalAlpha = alpha;
+      // card bg
+      roundRect(ctx, 8, ny + 2, w - 16, cardH - 4, 6);
+      ctx.fillStyle = 'rgba(255,255,255,0.04)'; ctx.fill();
+      ctx.strokeStyle = `${n.color}22`; ctx.lineWidth = 0.8; ctx.stroke();
+      // source pill
+      roundRect(ctx, 12, ny + 8, 22, 14, 3);
+      ctx.fillStyle = `${n.color}25`; ctx.fill();
+      ctx.fillStyle = n.color; ctx.font = 'bold 5.5px monospace'; ctx.textAlign = 'center';
+      ctx.fillText(n.src, 23, ny + 17);
+      // headline text with typewriter shimmer on active row
+      const isActive = i === Math.floor(scroll / cardH) % headlines.length;
+      const visLen = isActive ? Math.min(n.text.length, Math.floor(((t*0.009)%1)*n.text.length*3)) : n.text.length;
+      const displayText = n.text.slice(0, clamp(visLen, 6, 50));
+      ctx.fillStyle = isActive ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.55)';
+      ctx.font = `${isActive ? 'bold ' : ''}6.5px Inter,sans-serif`; ctx.textAlign = 'left';
+      ctx.fillText(displayText, 38, ny + 13);
+      // AI BRIEF badge
+      const bw = 34, bx = w - bw - 10;
+      roundRect(ctx, bx, ny + 8, bw, 14, 3);
+      const badgeGrad = ctx.createLinearGradient(bx, 0, bx+bw, 0);
+      badgeGrad.addColorStop(0,'rgba(167,139,250,0.22)'); badgeGrad.addColorStop(1,'rgba(56,189,248,0.12)');
+      ctx.fillStyle = badgeGrad; ctx.fill();
+      ctx.fillStyle = '#c4b5fd'; ctx.font = 'bold 5px monospace'; ctx.textAlign = 'center';
+      ctx.fillText('✦ AI', bx + bw/2, ny + 17);
+      // sentiment dot
+      const sentColor = i%3===0?'#34d399':i%3===1?'#ef4444':'#facc15';
+      ctx.beginPath(); ctx.arc(38, ny + 22, 2, 0, Math.PI*2);
+      ctx.fillStyle = sentColor; ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+  }
+  ctx.restore();
 
-  ctx.fillStyle='#a78bfa'; ctx.font='bold 12px Inter,sans-serif'; ctx.textAlign='center';
-  ctx.fillText('AI NEWS APP · MCP SERVICES',w/2,h-14);
+  // ── bottom bar: title + live indicator ──
+  ctx.fillStyle = 'rgba(3,0,30,0.85)';
+  ctx.fillRect(0, h - 20, w, 20);
+  // live pulse dot
+  const livePulse = 0.6 + 0.4*Math.sin(t*0.25);
+  ctx.beginPath(); ctx.arc(14, h - 10, 3.5, 0, Math.PI*2);
+  ctx.fillStyle = `rgba(239,68,68,${livePulse})`; ctx.fill();
+  ctx.beginPath(); ctx.arc(14, h - 10, 6, 0, Math.PI*2);
+  ctx.strokeStyle = `rgba(239,68,68,${livePulse*0.4})`; ctx.lineWidth = 1; ctx.stroke();
+  ctx.fillStyle = '#ef4444'; ctx.font = 'bold 6px monospace'; ctx.textAlign = 'left';
+  ctx.fillText('LIVE', 22, h - 7);
+  const titleGrad = ctx.createLinearGradient(40, 0, w - 10, 0);
+  titleGrad.addColorStop(0, '#a78bfa'); titleGrad.addColorStop(1, '#38bdf8');
+  ctx.fillStyle = titleGrad; ctx.font = 'bold 7px Inter,monospace'; ctx.textAlign = 'center';
+  ctx.fillText('AI NEWS · MCP SERVICES', w/2 + 8, h - 7);
 }
 
 /* ── project → draw function map ─────────────────────────── */
