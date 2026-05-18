@@ -7,7 +7,6 @@ import './NewsFeed.css';
 const CACHE_KEY = 'hn-ai-news-v1';
 
 // Try aihot first, fallback to HackerNews Algolia (guaranteed CORS-safe)
-const AIHOT_URL = 'https://aihot.virxact.com/api/public/items?mode=selected&take=20';
 const HN_URL = 'https://hn.algolia.com/api/v1/search_by_date?tags=story&query=artificial+intelligence+AI&hitsPerPage=20';
 
 async function fetchNews() {
@@ -20,25 +19,7 @@ async function fetchNews() {
     }
   } catch (_) {}
 
-  // Try aihot
-  try {
-    const res = await fetch(AIHOT_URL, {
-      headers: { 'User-Agent': navigator.userAgent, Accept: 'application/json' },
-    });
-    if (res.ok) {
-      const json = await res.json();
-      const items = (json.items || json.data || []).map(item => ({
-        id: item.id || item.url,
-        title: item.title,
-        url: item.url || '#',
-        source: 'AIHot',
-        time: item.publishedAt || item.date || '',
-      }));
-      if (items.length > 0) return items;
-    }
-  } catch (_) {}
-
-  // Fallback to HackerNews Algolia
+  // HackerNews Algolia — guaranteed CORS-safe, no API key needed
   const res = await fetch(HN_URL);
   const json = await res.json();
   return (json.hits || []).map(h => ({
