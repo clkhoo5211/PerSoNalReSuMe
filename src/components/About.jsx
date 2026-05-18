@@ -149,26 +149,59 @@ function SkillsSection() {
   );
 }
 
+const COMP_META = {
+  'Blockchain Architecture': { icon: '⛓️', color: '#38bdf8', desc: 'Designing on-chain systems end-to-end' },
+  'DApp Development':        { icon: '🔗', color: '#a78bfa', desc: 'Full-stack decentralised applications' },
+  'Grant Management':        { icon: '🏆', color: '#facc15', desc: 'Secured & delivered Dfinity grant 2022' },
+  'IT Team Leadership':      { icon: '👥', color: '#34d399', desc: 'Mentoring & directing cross-functional teams' },
+  'Project Management':      { icon: '📋', color: '#fb923c', desc: 'Agile delivery from spec to production' },
+  'System Administration':   { icon: '🖥️', color: '#f472b6', desc: 'Server ops, backup & infra reliability' },
+  'Technology Strategy':     { icon: '🧭', color: '#818cf8', desc: 'Roadmap & tech stack decision-making' },
+  'Middleware Development':  { icon: '⚙️', color: '#2dd4bf', desc: 'API bridges & inter-service data flow' },
+};
+
 function CompetenciesSection() {
+  const [hovered, setHovered] = useState(null);
   return (
     <div className="about-competencies">
       <h3>Core Competencies</h3>
-      <div className="competency-grid">
-        {profile.competencies.map((c, i) => (
-          <motion.div
-            key={c}
-            className="comp-card"
-            initial={{ opacity: 0, scale: 0.75 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.06, type: 'spring', stiffness: 200, damping: 16 }}
-            whileHover={{ scale: 1.07, y: -3 }}
-          >
-            <div className="comp-ring" />
-            <span className="comp-index">{String(i + 1).padStart(2, '0')}</span>
-            <span className="comp-label">{c}</span>
-          </motion.div>
-        ))}
+      <div className="comp-mosaic">
+        {profile.competencies.map((c, i) => {
+          const meta = COMP_META[c] || { icon: '💡', color: '#38bdf8', desc: '' };
+          return (
+            <motion.div
+              key={c}
+              className="comp-hex"
+              style={{ '--cc': meta.color }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.07, type: 'spring', stiffness: 180, damping: 18 }}
+              onHoverStart={() => setHovered(i)}
+              onHoverEnd={() => setHovered(null)}
+            >
+              <div className="comp-hex-glow" />
+              <div className="comp-hex-inner">
+                <span className="comp-hex-icon">{meta.icon}</span>
+                <span className="comp-hex-num">{String(i + 1).padStart(2, '0')}</span>
+              </div>
+              <div className="comp-hex-label">{c}</div>
+              <AnimatePresence>
+                {hovered === i && (
+                  <motion.div
+                    className="comp-hex-desc"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 4 }}
+                    transition={{ duration: 0.18 }}
+                  >
+                    {meta.desc}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );
@@ -224,16 +257,23 @@ export default function About() {
           <h3>Education</h3>
           <div className="edu-grid">
             {profile.education.map((edu, i) => (
-              <motion.div key={i} className="edu-card"
+              <motion.div key={i} className="edu-card edu-card-rich"
                 initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.45 }}>
-                <div className="edu-ribbon">{i === 0 ? '🎓 Bachelor' : '📚 Pre-Uni'}</div>
+                viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.45 }}
+                whileHover={{ y: -4 }}>
+                <div className="edu-ribbon-rich">
+                  <span className="edu-ribbon-icon">{i === 0 ? '🎓' : '📚'}</span>
+                  <span className="edu-ribbon-level">{i === 0 ? 'Bachelor\'s Degree' : 'Pre-University'}</span>
+                  <span className="edu-ribbon-period">{edu.period}</span>
+                </div>
                 <div className="edu-body">
                   <div className="edu-degree">{edu.degree}</div>
                   <div className="edu-institution">{edu.institution}</div>
-                  <div className="edu-period">{edu.period}</div>
-                  <div className="edu-achievement">
-                    <span className="edu-star">★</span> {edu.achievement}
+                  <div className="edu-achievement-row">
+                    <span className="edu-badge">★ {edu.achievement}</span>
+                    {i === 0 && <span className="edu-badge edu-badge-alt">🏅 First Class Hons</span>}
+                    {i === 0 && <span className="edu-badge edu-badge-alt">🖥️ IT &amp; Business</span>}
+                    {i === 1 && <span className="edu-badge edu-badge-alt">🌐 MUET Band 5</span>}
                   </div>
                 </div>
               </motion.div>

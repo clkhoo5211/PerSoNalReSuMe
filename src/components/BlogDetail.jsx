@@ -93,11 +93,11 @@ export default function BlogDetail() {
               <h4 className="bd-sidebar-heading">Share</h4>
               <div className="bd-share-btns">
                 <a
-                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}`}
+                  href={`https://x.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}`}
                   target="_blank" rel="noopener noreferrer"
                   className="btn btn-outline bd-share-btn"
                 >
-                  𝕏 Twitter
+                  𝕏 Share on X
                 </a>
                 <button
                   className="btn btn-outline bd-share-btn"

@@ -303,3 +303,13 @@
   .hero-terminal { max-width: 340px; }
   .terminal-body { font-size: 11px; padding: 14px; }
 }
+
+/* Light mode — name needs dark gradient so it's readable */
+body.light .hero-name,
+body.light .glitch-name::before,
+body.light .glitch-name::after {
+  background: linear-gradient(135deg, #0f172a 0%, #1e40af 60%, #0369a1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
