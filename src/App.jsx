@@ -114,7 +114,7 @@ export default function App() {
 
   return (
     <>
-      <BackgroundCanvas theme={theme} dayPalette={dayTheme.canvas} />
+      <BackgroundCanvas theme={theme} dayPalette={dayTheme.canvas} dayIndex={new Date().getDay()} />
       <DayThemeBadge dayTheme={dayTheme} />
       <CustomCursor />
       <Navbar theme={theme} onThemeToggle={toggleTheme} />

@@ -44,12 +44,13 @@ body.light {
 html { scroll-behavior: smooth; }
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background: transparent;
+  background: #080c14;   /* fallback — canvas paints over this instantly */
   color: var(--text);
   line-height: 1.65;
   transition: color .35s;
   overflow-x: hidden;
 }
+body.light { background: #c9e8ff; }
 /* canvas background sits at z-index:0, root content above it */
 #root { position: relative; z-index: 1; }
 
