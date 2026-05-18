@@ -1,21 +1,14 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import Tilt from 'react-parallax-tilt';
-import { Player } from '@remotion/player';
-import ProjectAnimation from './remotion/ProjectAnimation';
+import ProjectCardCanvas from './ProjectCardCanvas';
 import ProjectMediaViewer from './ProjectMediaViewer';
 import Modal from './Modal';
 import './ProjectCard.css';
 
 export default function ProjectCard({ project, index }) {
   const [open, setOpen] = useState(false);
-
-  const inputProps = useMemo(() => ({
-    title: project.title,
-    category: project.category,
-    color: project.category === 'AI' ? '#00D4FF' : project.category === 'Web3' ? '#6366F1' : '#10B981',
-  }), [project]);
 
   return (
     <>
@@ -45,20 +38,7 @@ export default function ProjectCard({ project, index }) {
             onKeyDown={e => e.key === 'Enter' && setOpen(true)}
           >
             <div className="project-media">
-              <Player
-                component={ProjectAnimation}
-                compositionWidth={400}
-                compositionHeight={220}
-                durationInFrames={150}
-                fps={30}
-                inputProps={inputProps}
-                style={{ width: '100%', height: '200px', display: 'block', borderRadius: '8px 8px 0 0', background: '#060d1f' }}
-                autoPlay
-                loop
-                muted
-                controls={false}
-                clickToPlay={false}
-              />
+              <ProjectCardCanvas category={project.category} title={project.title} />
               <div className="project-category-badge">
                 <span className="tag">{project.category}</span>
                 <span className={`status-dot status-${project.status.toLowerCase().replace(/\s/g, '-')}`}>{project.status}</span>
