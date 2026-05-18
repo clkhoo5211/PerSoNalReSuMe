@@ -2,76 +2,61 @@ import { motion } from 'framer-motion';
 import { profile } from '../data/profile';
 import './LinkTree.css';
 
-const container = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.07 } },
-};
-const item = {
-  hidden: { opacity: 0, scale: 0.7, y: 20 },
-  visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 260, damping: 18 } },
-};
-
 export default function LinkTree() {
   return (
-    <section id="links" className="linktree-section section">
+    <section id="links" className="linktree-section">
       <motion.div
-        initial={{ opacity: 0, y: 24 }}
+        className="lt-strip"
+        initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.5 }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ duration: 0.4 }}
       >
-        <h2 className="section-title" style={{ textAlign: 'center' }}>Find Me</h2>
-        <p className="linktree-subtitle">Connect across the web</p>
-
-        {/* Social icons row */}
-        <motion.div
-          className="lt-social-row"
-          variants={container}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          {profile.social.map(link => (
+        {/* Social icon pills in one tight row */}
+        <div className="lt-social-row">
+          {profile.social.map((link, i) => (
             <motion.a
               key={link.label}
               href={link.url}
               target={link.url.startsWith('http') ? '_blank' : undefined}
               rel="noopener noreferrer"
-              className="lt-social-orb"
-              variants={item}
-              whileHover={{ scale: 1.18, y: -4 }}
+              className="lt-pill"
+              initial={{ opacity: 0, scale: 0.75 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.05, type: 'spring', stiffness: 260, damping: 18 }}
+              whileHover={{ scale: 1.12, y: -2 }}
               title={link.label}
             >
-              <span className="lt-orb-icon">{link.icon}</span>
-              <span className="lt-orb-label">{link.label}</span>
+              <span className="lt-pill-icon">{link.icon}</span>
+              <span className="lt-pill-label">{link.label}</span>
             </motion.a>
           ))}
-        </motion.div>
+        </div>
 
-        {/* Action links grid */}
-        <motion.div
-          className="lt-action-grid"
-          variants={container}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          {profile.links.slice(0, 4).map(link => (
+        {/* Divider */}
+        <div className="lt-divider" />
+
+        {/* Action links as a single compact row */}
+        <div className="lt-actions">
+          {profile.links.slice(0, 4).map((link, i) => (
             <motion.a
               key={link.label}
               href={link.url}
               target={link.url.startsWith('http') ? '_blank' : undefined}
               rel="noopener noreferrer"
               download={link.url.endsWith('.pdf') ? true : undefined}
-              className={`lt-action-card${link.primary ? ' primary' : ''}`}
-              variants={item}
-              whileHover={{ scale: 1.04, y: -3 }}
+              className={`lt-action${link.primary ? ' primary' : ''}`}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.15 + i * 0.05 }}
+              whileHover={{ scale: 1.04 }}
             >
-              <span className="lt-action-icon">{link.icon}</span>
-              <span className="lt-action-label">{link.label}</span>
+              {link.icon} {link.label}
             </motion.a>
           ))}
-        </motion.div>
+        </div>
       </motion.div>
     </section>
   );

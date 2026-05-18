@@ -1,90 +1,94 @@
-.linktree-section { text-align: center; }
-.linktree-subtitle {
-  color: var(--text-muted);
-  margin-bottom: var(--space-lg);
-  font-size: 16px;
+.linktree-section {
+  padding: 28px var(--space-xl);
+  display: flex;
+  justify-content: center;
 }
 
-/* Social orbs */
+.lt-strip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 700px;
+}
+
+/* Social pills — tight horizontal row */
 .lt-social-row {
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
-  gap: 20px;
-  margin-bottom: var(--space-xl);
+  justify-content: center;
+  gap: 10px;
 }
-.lt-social-orb {
+
+.lt-pill {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 6px;
-  text-decoration: none;
-  transition: transform .2s;
-}
-.lt-orb-icon {
-  font-size: 28px;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(56,189,248,0.08);
-  border: 1.5px solid rgba(56,189,248,0.2);
-  transition: background .2s, border-color .2s, box-shadow .2s;
-}
-.lt-social-orb:hover .lt-orb-icon {
-  background: rgba(56,189,248,0.18);
-  border-color: var(--primary);
-  box-shadow: 0 0 18px rgba(56,189,248,0.35);
-}
-.lt-orb-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: .5px;
-}
-
-/* Action cards */
-.lt-action-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  max-width: 640px;
-  margin: 0 auto;
-}
-.lt-action-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 20px 12px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.03);
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
   text-decoration: none;
-  color: var(--text);
+  color: var(--text-muted);
+  font-size: 12px;
   font-weight: 600;
-  font-size: 13px;
-  transition: border-color .2s, background .2s, box-shadow .2s;
+  transition: border-color .2s, background .2s, color .2s;
 }
-.lt-action-card:hover {
-  border-color: rgba(56,189,248,0.35);
-  background: rgba(56,189,248,0.06);
-  box-shadow: 0 4px 20px rgba(56,189,248,0.12);
+.lt-pill:hover {
+  border-color: rgba(56,189,248,0.4);
+  background: rgba(56,189,248,0.07);
+  color: var(--primary);
 }
-.lt-action-card.primary {
-  background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(129,140,248,0.15));
-  border-color: rgba(56,189,248,0.3);
-}
-.lt-action-card.primary:hover {
-  background: linear-gradient(135deg, rgba(56,189,248,0.25), rgba(129,140,248,0.25));
-  box-shadow: 0 4px 24px rgba(56,189,248,0.2);
-}
-.lt-action-icon { font-size: 26px; }
-.lt-action-label { text-align: center; line-height: 1.3; }
+.lt-pill-icon { font-size: 15px; line-height: 1; }
+.lt-pill-label { letter-spacing: .3px; }
 
-@media (max-width: 600px) {
-  .lt-action-grid { grid-template-columns: repeat(2, 1fr); }
+/* Thin separator */
+.lt-divider {
+  width: 60px;
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+}
+
+/* Action buttons — compact single row */
+.lt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.lt-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: border-color .2s, background .2s, color .2s;
+}
+.lt-action:hover {
+  border-color: rgba(56,189,248,0.35);
+  background: rgba(56,189,248,0.07);
+  color: var(--text);
+}
+.lt-action.primary {
+  color: var(--primary);
+  border-color: rgba(56,189,248,0.3);
+  background: rgba(56,189,248,0.08);
+}
+.lt-action.primary:hover {
+  background: rgba(56,189,248,0.16);
+  border-color: var(--primary);
+}
+
+@media (max-width: 480px) {
+  .lt-social-row { gap: 7px; }
+  .lt-pill-label { display: none; }
+  .lt-pill { padding: 7px 10px; }
 }
