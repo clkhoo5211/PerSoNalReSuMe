@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { posts } from '../data/blog';
+import { fetchPosts } from '../data/blog';
 import './Blog.css';
 
 const TAG_COLORS = {
@@ -10,12 +10,14 @@ const TAG_COLORS = {
   'React': '#38bdf8', 'Performance': '#facc15', 'Architecture': '#34d399',
 };
 
-const allTags = ['All', ...Array.from(new Set(posts.flatMap(p => p.tags)))];
-
 export default function Blog() {
+  const [posts, setPosts] = useState([]);
   const [activeTag, setActiveTag] = useState('All');
   const [hovered, setHovered] = useState(null);
 
+  useEffect(() => { fetchPosts().then(setPosts); }, []);
+
+  const allTags = ['All', ...Array.from(new Set(posts.flatMap(p => p.tags)))];
   const filtered = activeTag === 'All' ? posts : posts.filter(p => p.tags.includes(activeTag));
   const [featured, ...rest] = filtered;
 

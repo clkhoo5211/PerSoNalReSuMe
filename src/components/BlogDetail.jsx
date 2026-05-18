@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { posts } from '../data/blog';
+import { fetchPosts } from '../data/blog';
 import AnimatedTitle from './AnimatedTitle';
 import GiscusComments from './GiscusComments';
 import './BlogDetail.css';
@@ -8,9 +9,13 @@ import './BlogDetail.css';
 export default function BlogDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => { fetchPosts().then(setPosts); }, []);
+
   const post = posts.find(p => p.id === id);
 
-  if (!post) {
+  if (posts.length > 0 && !post) {
     return (
       <div className="bd-not-found">
         <h2>Post not found</h2>
@@ -19,7 +24,9 @@ export default function BlogDetail() {
     );
   }
 
-  const related = posts.filter(p => p.id !== id).slice(0, 2);
+  if (!post) return <div className="bd-not-found" style={{ color: 'var(--text-muted)' }}>Loading…</div>;
+
+  const related = posts.filter(p => p.id !== id).slice(0, 3);
 
   return (
     <motion.div
@@ -58,7 +65,9 @@ export default function BlogDetail() {
             <div className="bd-divider" />
 
             <div className="bd-content">
-              {post.content}
+              {post.content.split('\n\n').map((para, i) => (
+                <p key={i}>{para}</p>
+              ))}
             </div>
 
             {/* Comments section */}

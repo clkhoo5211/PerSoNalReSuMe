@@ -1,29 +1,21 @@
-export const posts = [
-  {
-    id: 'mcp-guide',
-    title: 'Getting Started with MCP',
-    date: '2026-05-10',
-    readTime: '8 min',
-    summary: 'A comprehensive guide to implementing Model Context Protocol in your applications.',
-    tags: ['MCP', 'AI', 'Tutorial'],
-    content: 'Model Context Protocol (MCP) is an open standard that enables AI models to securely interact with external tools and data sources...',
-  },
-  {
-    id: 'web3-security',
-    title: 'Web3 Security Best Practices',
-    date: '2026-04-22',
-    readTime: '12 min',
-    summary: 'Essential patterns for building trustworthy decentralized applications in 2026.',
-    tags: ['Web3', 'Security', 'Solidity'],
-    content: 'Security in Web3 is not optional — a single vulnerability can cost millions. Here are the patterns that matter most...',
-  },
-  {
-    id: 'react-scaling',
-    title: 'Scaling React to Production',
-    date: '2026-04-05',
-    readTime: '10 min',
-    summary: 'Strategies for building performant, maintainable React codebases at enterprise scale.',
-    tags: ['React', 'Performance', 'Architecture'],
-    content: 'As React applications grow, the patterns that worked at small scale start to show cracks...',
-  },
-];
+// Blog posts are loaded from /public/blog.json at runtime.
+// This module provides a synchronous fallback for SSR/build-time use
+// and a fetch helper for runtime use.
+
+let _cache = null;
+
+export async function fetchPosts() {
+  if (_cache) return _cache;
+  const res = await fetch(`${import.meta.env.BASE_URL}blog.json`);
+  _cache = await res.json();
+  return _cache;
+}
+
+// Synchronous access after fetchPosts() has been called
+export function getCachedPosts() {
+  return _cache || [];
+}
+
+// Seed minimal stubs so components that import `posts` directly still work
+// before the async fetch completes. Replace with real data by calling fetchPosts().
+export const posts = [];
