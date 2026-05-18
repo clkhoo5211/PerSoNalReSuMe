@@ -1,8 +1,30 @@
 import { motion } from 'framer-motion';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { profile } from '../data/profile';
 import './LinkTree.css';
 
+function scrollToId(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 export default function LinkTree() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleActionClick = (e, link) => {
+    if (link.url.startsWith('#')) {
+      e.preventDefault();
+      const id = link.url.slice(1);
+      if (location.pathname === '/') {
+        scrollToId(id);
+      } else {
+        navigate('/');
+        setTimeout(() => scrollToId(id), 120);
+      }
+    }
+  };
+
   return (
     <section id="links" className="linktree-section">
       <motion.div
@@ -12,13 +34,13 @@ export default function LinkTree() {
         viewport={{ once: true, amount: 0.4 }}
         transition={{ duration: 0.4 }}
       >
-        {/* Social icon pills in one tight row */}
+        {/* Social icon pills */}
         <div className="lt-social-row">
           {profile.social.map((link, i) => (
             <motion.a
               key={link.label}
               href={link.url}
-              target={link.url.startsWith('http') ? '_blank' : undefined}
+              target="_blank"
               rel="noopener noreferrer"
               className="lt-pill"
               initial={{ opacity: 0, scale: 0.75 }}
@@ -34,10 +56,9 @@ export default function LinkTree() {
           ))}
         </div>
 
-        {/* Divider */}
         <div className="lt-divider" />
 
-        {/* Action links as a single compact row */}
+        {/* Action links */}
         <div className="lt-actions">
           {profile.links.slice(0, 4).map((link, i) => (
             <motion.a
@@ -52,6 +73,7 @@ export default function LinkTree() {
               viewport={{ once: true }}
               transition={{ delay: 0.15 + i * 0.05 }}
               whileHover={{ scale: 1.04 }}
+              onClick={(e) => handleActionClick(e, link)}
             >
               {link.icon} {link.label}
             </motion.a>
