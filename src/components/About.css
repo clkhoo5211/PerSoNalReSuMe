@@ -58,7 +58,7 @@
 
 .tl-card {
   flex: 1;
-  background: rgba(255,255,255,0.03);
+  background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.07);
   border-radius: 12px;
   overflow: hidden;
@@ -78,7 +78,7 @@
   text-align: left;
   gap: 12px;
 }
-.tl-header:hover { background: rgba(255,255,255,0.03); }
+.tl-header:hover { background: rgba(255,255,255,0.08); }
 
 .tl-header-left { display: flex; flex-direction: column; gap: 3px; flex: 1; }
 .tl-role { font-size: 15px; font-weight: 700; color: var(--text); }
@@ -138,7 +138,7 @@
   border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.09);
   border: 1px solid rgba(255,255,255,0.09);
   color: var(--text-muted);
   cursor: pointer;
@@ -161,7 +161,7 @@
   padding: 28px 24px;
   border-radius: 18px;
   border: 1px solid color-mix(in srgb, var(--sc) 20%, transparent);
-  background: rgba(255,255,255,0.02);
+  background: rgba(255,255,255,0.06);
   overflow: hidden;
   min-height: 90px;
 }
@@ -175,7 +175,7 @@
   font-weight: 700;
   padding: 7px 16px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--sc) 10%, rgba(255,255,255,0.03));
+  background: color-mix(in srgb, var(--sc) 10%, rgba(255,255,255,0.08));
   color: var(--sc);
   border: 1px solid color-mix(in srgb, var(--sc) 30%, transparent);
   cursor: default;
@@ -215,7 +215,7 @@
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.025);
+  background: rgba(255,255,255,0.07);
   transition: border-color .25s, box-shadow .25s;
 }
 .edu-card:hover {
@@ -251,7 +251,7 @@
   position: relative;
   border-radius: 14px;
   padding: 18px 14px 14px;
-  background: rgba(255,255,255,0.025);
+  background: rgba(255,255,255,0.07);
   border: 1px solid rgba(255,255,255,0.07);
   cursor: default;
   display: flex;
