@@ -510,17 +510,219 @@ function drawMobileApps(ctx, w, h, t) {
   ctx.fillText('iOS · ANDROID MOBILE APPS', w/2, h-14);
 }
 
+/* ────────────────────────────────────────────────────────── *
+ * AI-1. TRADING SIGNAL ENGINE — LSTM wave + confidence bar  *
+ * ────────────────────────────────────────────────────────── */
+function drawAITradingSignal(ctx, w, h, t) {
+  ctx.fillStyle='#060d1f'; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='rgba(0,212,255,0.05)'; ctx.lineWidth=1;
+  for(let x=0;x<w;x+=28){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(let y=0;y<h;y+=22){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+
+  // LSTM wave — sine composite mimicking price prediction
+  const midY = h*0.42;
+  const points = [];
+  for(let x=0;x<=w;x+=3){
+    const nx = x/w;
+    const y = midY
+      + Math.sin(nx*8+t*0.04)*18
+      + Math.sin(nx*3.2+t*0.025)*10
+      + Math.sin(nx*14+t*0.07)*5;
+    points.push({x,y});
+  }
+  // prediction fill (future half, lighter)
+  const splitX = w*0.6;
+  ctx.beginPath();
+  points.filter(p=>p.x>=splitX).forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+  ctx.lineTo(w, midY); ctx.lineTo(splitX, midY); ctx.closePath();
+  ctx.fillStyle='rgba(0,212,255,0.06)'; ctx.fill();
+  // actual line (left)
+  ctx.beginPath();
+  points.filter(p=>p.x<=splitX).forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+  ctx.strokeStyle='rgba(0,212,255,0.8)'; ctx.lineWidth=1.8; ctx.stroke();
+  // predicted line (right, dashed)
+  ctx.setLineDash([4,3]);
+  ctx.beginPath();
+  points.filter(p=>p.x>=splitX).forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+  ctx.strokeStyle='rgba(0,212,255,0.45)'; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.setLineDash([]);
+
+  // signal dot + label
+  const sigPulse = 0.7+0.3*Math.sin(t*0.1);
+  const last = points[points.length-1];
+  ctx.beginPath(); ctx.arc(last.x-2, last.y, 5*sigPulse, 0, Math.PI*2);
+  ctx.fillStyle=`rgba(0,212,255,${sigPulse})`; ctx.fill();
+
+  // confidence bars
+  const signals = [{label:'BUY',  pct:0.82, color:'#10B981'},
+                   {label:'HOLD', pct:0.12, color:'#f59e0b'},
+                   {label:'SELL', pct:0.06, color:'#f43f5e'}];
+  const bx=16, by=h-52, bw2=90, bh=10;
+  signals.forEach((s,i)=>{
+    const by2=by+i*16;
+    ctx.fillStyle='rgba(255,255,255,0.06)';
+    roundRect(ctx,bx,by2,bw2,bh,3); ctx.fill();
+    ctx.fillStyle=s.color;
+    roundRect(ctx,bx,by2,bw2*s.pct,bh,3); ctx.fill();
+    ctx.fillStyle=s.color; ctx.font='7px monospace'; ctx.textAlign='left';
+    ctx.fillText(`${s.label} ${(s.pct*100).toFixed(0)}%`,bx+bw2+6,by2+8);
+  });
+
+  ctx.fillStyle='#00D4FF'; ctx.font='bold 12px Inter,sans-serif'; ctx.textAlign='center';
+  ctx.fillText('AI TRADING SIGNAL ENGINE', w/2, h-14);
+}
+
+/* ────────────────────────────────────────────────────────── *
+ * AI-2. SMART CONTRACT AUDITOR — code scan + risk matrix    *
+ * ────────────────────────────────────────────────────────── */
+function drawAIAuditor(ctx, w, h, t) {
+  ctx.fillStyle='#06030f'; ctx.fillRect(0,0,w,h);
+  const cycle = t % 90;
+
+  // code lines with scan highlight
+  const lines = [
+    {text:'function withdraw() external {', color:'#94a3b8'},
+    {text:'  uint bal = balances[msg.sender];', color:'#94a3b8'},
+    {text:'  (bool ok,) = msg.sender.call{', color:'#f43f5e'},
+    {text:'    value: bal}("");', color:'#f43f5e'},
+    {text:'  balances[msg.sender] = 0;', color:'#94a3b8'},
+    {text:'}', color:'#94a3b8'},
+  ];
+  const scanLineY = 20 + (cycle/90)*(lines.length*15+10);
+  // scan beam
+  ctx.fillStyle='rgba(244,63,94,0.07)';
+  ctx.fillRect(0, scanLineY-3, w*0.62, 6);
+
+  lines.forEach((l,i)=>{
+    const y=24+i*15;
+    const isRed = l.color==='#f43f5e';
+    if(isRed){
+      ctx.fillStyle='rgba(244,63,94,0.08)';
+      ctx.fillRect(12,y-10,w*0.62-24,13);
+    }
+    ctx.fillStyle=l.color; ctx.font='7px monospace'; ctx.textAlign='left';
+    ctx.fillText(l.text.slice(0,38), 14, y);
+  });
+
+  // vulnerability panel
+  const vx=w*0.64, vy=14, vw=w*0.34;
+  ctx.fillStyle='rgba(244,63,94,0.08)';
+  roundRect(ctx,vx,vy,vw,60,5); ctx.fill();
+  ctx.strokeStyle='rgba(244,63,94,0.4)'; ctx.lineWidth=1;
+  roundRect(ctx,vx,vy,vw,60,5); ctx.stroke();
+  ctx.fillStyle='#f43f5e'; ctx.font='bold 7px monospace'; ctx.textAlign='center';
+  ctx.fillText('⚠ REENTRANCY', vx+vw/2, vy+14);
+  ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.font='6px monospace';
+  ctx.fillText('Line 3–4', vx+vw/2, vy+26);
+  ctx.fillText('CRITICAL', vx+vw/2, vy+38);
+  const rp=0.7+0.3*Math.sin(t*0.1);
+  ctx.fillStyle=`rgba(244,63,94,${rp})`; ctx.font='bold 9px monospace';
+  ctx.fillText('SEVERITY: 9.2', vx+vw/2, vy+52);
+
+  // audit score
+  const score = 64;
+  ctx.fillStyle='rgba(255,255,255,0.06)';
+  roundRect(ctx,vx,vy+68,vw,40,5); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.font='6px monospace'; ctx.textAlign='center';
+  ctx.fillText('AUDIT SCORE',vx+vw/2,vy+82);
+  ctx.fillStyle='#f43f5e'; ctx.font='bold 14px monospace';
+  ctx.fillText(`${score}/100`,vx+vw/2,vy+100);
+
+  ctx.fillStyle='#a78bfa'; ctx.font='bold 12px Inter,sans-serif'; ctx.textAlign='center';
+  ctx.fillText('AI CONTRACT AUDITOR', w/2, h-14);
+}
+
+/* ────────────────────────────────────────────────────────── *
+ * AI-3. BLOCKCHAIN ANALYTICS — on-chain anomaly radar       *
+ * ────────────────────────────────────────────────────────── */
+function drawAIAnalytics(ctx, w, h, t) {
+  const bg=ctx.createLinearGradient(0,0,w,h);
+  bg.addColorStop(0,'#060d1f'); bg.addColorStop(1,'#0b1535');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+
+  const cx=w*0.32, cy=h*0.48, maxR=70;
+  // radar rings
+  for(let ri=1;ri<=4;ri++){
+    const r=maxR*ri/4;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.strokeStyle='rgba(99,102,241,0.15)'; ctx.lineWidth=0.8; ctx.stroke();
+  }
+  // radar axes
+  const axes=6;
+  const labels=['Volume','Whale','Wash','Flow','DeFi','Risk'];
+  for(let i=0;i<axes;i++){
+    const a=i*(Math.PI*2/axes)-Math.PI/2;
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(a)*maxR,cy+Math.sin(a)*maxR);
+    ctx.strokeStyle='rgba(99,102,241,0.2)'; ctx.lineWidth=0.7; ctx.stroke();
+    ctx.fillStyle='rgba(148,163,184,0.6)'; ctx.font='6px monospace'; ctx.textAlign='center';
+    const lx=cx+Math.cos(a)*(maxR+12), ly=cy+Math.sin(a)*(maxR+12);
+    ctx.fillText(labels[i],lx,ly+2);
+  }
+  // animated anomaly polygon
+  const vals=[0.9,0.75,0.6,0.85,0.7,0.95];
+  const pulse=0.05*Math.sin(t*0.06);
+  ctx.beginPath();
+  vals.forEach((v,i)=>{
+    const a=i*(Math.PI*2/axes)-Math.PI/2;
+    const r=maxR*(v+pulse);
+    i===0?ctx.moveTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r)
+         :ctx.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);
+  });
+  ctx.closePath();
+  ctx.fillStyle='rgba(99,102,241,0.15)'; ctx.fill();
+  ctx.strokeStyle='rgba(99,102,241,0.7)'; ctx.lineWidth=1.5; ctx.stroke();
+  // rotating scan line
+  const scanA=t*0.03-Math.PI/2;
+  ctx.beginPath(); ctx.moveTo(cx,cy);
+  ctx.lineTo(cx+Math.cos(scanA)*maxR,cy+Math.sin(scanA)*maxR);
+  ctx.strokeStyle='rgba(0,212,255,0.4)'; ctx.lineWidth=1.5; ctx.stroke();
+  // sweep fill
+  ctx.beginPath(); ctx.moveTo(cx,cy);
+  ctx.arc(cx,cy,maxR,scanA-0.35,scanA);
+  ctx.closePath();
+  ctx.fillStyle='rgba(0,212,255,0.05)'; ctx.fill();
+
+  // alert feed on right
+  const alerts=[
+    {label:'🐋 Whale Move',  val:'$4.2M', color:'#f59e0b'},
+    {label:'⚠ Wash Trade',   val:'0x4f..', color:'#f43f5e'},
+    {label:'✓ Normal Flow',  val:'ETH',   color:'#10b981'},
+    {label:'📊 Volume Spike',val:'+340%', color:'#a78bfa'},
+  ];
+  const ax=w*0.62, ay=18;
+  alerts.forEach((al,i)=>{
+    const apy=ay+i*30;
+    const pulse2=0.6+0.4*Math.sin(t*0.08+i*0.9);
+    ctx.fillStyle=`rgba(255,255,255,0.04)`;
+    roundRect(ctx,ax,apy,w*0.36-4,22,4); ctx.fill();
+    ctx.strokeStyle=`${al.color}${Math.floor(pulse2*160).toString(16).padStart(2,'0')}`;
+    ctx.lineWidth=0.8;
+    roundRect(ctx,ax,apy,w*0.36-4,22,4); ctx.stroke();
+    ctx.fillStyle=al.color; ctx.font='6px monospace'; ctx.textAlign='left';
+    ctx.fillText(al.label,ax+5,apy+9);
+    ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.font='bold 7px monospace';
+    ctx.fillText(al.val,ax+5,apy+19);
+  });
+
+  ctx.fillStyle='#00D4FF'; ctx.font='bold 12px Inter,sans-serif'; ctx.textAlign='center';
+  ctx.fillText('AI BLOCKCHAIN ANALYTICS', w/2, h-14);
+}
+
 /* ── project → draw function map ─────────────────────────── */
 const DRAW_FN = {
-  'trading-platform':   drawTrading,
-  'crypto-exchange':    drawCryptoExchange,
-  'icp-dapp':           drawICP,
-  'nft-marketplace':    drawNFT,
-  'mywallet':           drawWallet,
-  'erp-system':         drawERP,
-  'blockchain-ecommerce': drawEcommerce,
-  'smart-contracts':    drawSmartContracts,
-  'mobile-apps':        drawMobileApps,
+  'trading-platform':       drawTrading,
+  'crypto-exchange':        drawCryptoExchange,
+  'icp-dapp':               drawICP,
+  'nft-marketplace':        drawNFT,
+  'mywallet':               drawWallet,
+  'erp-system':             drawERP,
+  'blockchain-ecommerce':   drawEcommerce,
+  'smart-contracts':        drawSmartContracts,
+  'mobile-apps':            drawMobileApps,
+  'ai-trading-signal':      drawAITradingSignal,
+  'ai-smart-contract-auditor': drawAIAuditor,
+  'ai-blockchain-analytics': drawAIAnalytics,
 };
 
 /* ── main component ──────────────────────────────────────── */

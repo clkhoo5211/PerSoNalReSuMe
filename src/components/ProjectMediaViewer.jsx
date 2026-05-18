@@ -1,6 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Player } from '@remotion/player';
-import ProjectAnimation from './remotion/ProjectAnimation';
+import { useState } from 'react';
+import ProjectCardCanvas from './ProjectCardCanvas';
 import './ProjectMediaViewer.css';
 
 function isVideo(url) {
@@ -27,12 +26,6 @@ function MediaSlide({ item }) {
 }
 
 export default function ProjectMediaViewer({ project }) {
-  const inputProps = useMemo(() => ({
-    title: project.title,
-    category: project.category,
-    color: project.category === 'AI' ? '#00D4FF' : project.category === 'Web3' ? '#6366F1' : '#10B981',
-  }), [project]);
-
   const media = project.media || [];
   const hasMedia = media.length > 0;
 
@@ -45,19 +38,11 @@ export default function ProjectMediaViewer({ project }) {
     return (
       <div className="pmv-root pmv-placeholder">
         <div className="pmv-remotion-wrap">
-          <Player
-            component={ProjectAnimation}
-            compositionWidth={700}
-            compositionHeight={320}
-            durationInFrames={150}
-            fps={30}
-            inputProps={inputProps}
-            style={{ width: '100%', height: '100%' }}
-            autoPlay
-            loop
-            muted
-            controls={false}
-            clickToPlay={false}
+          <ProjectCardCanvas
+            projectId={project.id}
+            category={project.category}
+            title={project.title}
+            style={{ width: '100%', height: '100%', borderRadius: '10px' }}
           />
         </div>
         <div className="pmv-placeholder-label">

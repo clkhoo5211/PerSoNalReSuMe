@@ -259,11 +259,15 @@ export default function About() {
             {profile.education.map((edu, i) => (
               <motion.div key={i} className="edu-card edu-card-rich"
                 initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.45 }}
+                viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.4 }}
                 whileHover={{ y: -4 }}>
                 <div className="edu-ribbon-rich">
-                  <span className="edu-ribbon-icon">{i === 0 ? '🎓' : '📚'}</span>
-                  <span className="edu-ribbon-level">{i === 0 ? 'Bachelor\'s Degree' : 'Pre-University'}</span>
+                  <span className="edu-ribbon-icon">
+                    {edu.level === 'university' ? '🎓' : edu.level === 'pre-uni' ? '📚' : edu.level === 'secondary' ? '🏫' : '✏️'}
+                  </span>
+                  <span className="edu-ribbon-level">
+                    {edu.level === 'university' ? "Bachelor's Degree" : edu.level === 'pre-uni' ? 'Pre-University' : edu.level === 'secondary' ? 'Secondary School' : 'Primary School'}
+                  </span>
                   <span className="edu-ribbon-period">{edu.period}</span>
                 </div>
                 <div className="edu-body">
@@ -271,9 +275,9 @@ export default function About() {
                   <div className="edu-institution">{edu.institution}</div>
                   <div className="edu-achievement-row">
                     <span className="edu-badge">★ {edu.achievement}</span>
-                    {i === 0 && <span className="edu-badge edu-badge-alt">🏅 First Class Hons</span>}
-                    {i === 0 && <span className="edu-badge edu-badge-alt">🖥️ IT &amp; Business</span>}
-                    {i === 1 && <span className="edu-badge edu-badge-alt">🌐 MUET Band 5</span>}
+                    {edu.level === 'university' && <span className="edu-badge edu-badge-alt">🏅 First Class Hons</span>}
+                    {edu.level === 'university' && <span className="edu-badge edu-badge-alt">🖥️ IT &amp; Business</span>}
+                    {edu.level === 'pre-uni' && <span className="edu-badge edu-badge-alt">🌐 MUET Band 5</span>}
                   </div>
                 </div>
               </motion.div>

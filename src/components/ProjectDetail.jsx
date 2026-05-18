@@ -1,9 +1,7 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Player } from '@remotion/player';
-import { useMemo } from 'react';
 import { projects } from '../data/projects';
-import ProjectAnimation from './remotion/ProjectAnimation';
+import ProjectCardCanvas from './ProjectCardCanvas';
 import ProjectMediaViewer from './ProjectMediaViewer';
 import AnimatedTitle from './AnimatedTitle';
 import MagneticButton from './MagneticButton';
@@ -14,11 +12,6 @@ export default function ProjectDetail() {
   const navigate = useNavigate();
   const project = projects.find(p => p.id === id);
 
-  const inputProps = useMemo(() => project ? ({
-    title: project.title,
-    category: project.category,
-    color: project.category === 'AI' ? '#00D4FF' : project.category === 'Web3' ? '#6366F1' : '#10B981',
-  }) : null, [project]);
 
   if (!project) {
     return (
@@ -138,15 +131,10 @@ export default function ProjectDetail() {
                 {related.map(r => (
                   <Link key={r.id} to={`/projects/${r.id}`} className="pd-related-card card">
                     <div className="pd-related-animation">
-                      <Player
-                        component={ProjectAnimation}
-                        compositionWidth={300}
-                        compositionHeight={140}
-                        durationInFrames={150}
-                        fps={30}
-                        inputProps={{ title: r.title, category: r.category, color: r.category === 'AI' ? '#00D4FF' : r.category === 'Web3' ? '#6366F1' : '#10B981' }}
-                        style={{ width: '100%', height: '100%', borderRadius: '10px 10px 0 0' }}
-                        autoPlay loop muted controls={false} clickToPlay={false}
+                      <ProjectCardCanvas
+                        projectId={r.id}
+                        category={r.category}
+                        title={r.title}
                       />
                     </div>
                     <div className="pd-related-info">
