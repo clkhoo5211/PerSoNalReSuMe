@@ -277,24 +277,27 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  transition: border-color .25s, background .25s, box-shadow .3s;
+  transition: border-color .3s, background .3s, box-shadow .3s;
+  will-change: transform;
 }
 .comp-hex:hover {
-  border-color: color-mix(in srgb, var(--cc) 60%, transparent);
-  background: color-mix(in srgb, var(--cc) 6%, transparent);
-  box-shadow: 0 0 28px color-mix(in srgb, var(--cc) 20%, transparent);
+  border-color: var(--cc);
+  background: rgba(255,255,255,0.07);
+  box-shadow: 0 0 22px rgba(0,0,0,0.1), 0 0 0 1px var(--cc);
 }
 
+/* glow orb in corner — opacity only transition, no background change on hover */
 .comp-hex-glow {
   position: absolute;
-  bottom: -30px; right: -30px;
-  width: 90px; height: 90px;
+  bottom: -28px; right: -28px;
+  width: 88px; height: 88px;
   border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--cc) 30%, transparent) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--cc) 0%, transparent 70%);
+  opacity: 0.12;
   pointer-events: none;
   transition: opacity .3s;
 }
-.comp-hex:hover .comp-hex-glow { opacity: 1.8; }
+.comp-hex:hover .comp-hex-glow { opacity: 0.28; }
 
 .comp-hex-inner {
   display: flex;
@@ -305,13 +308,14 @@
 .comp-hex-icon {
   font-size: 22px;
   line-height: 1;
-  filter: drop-shadow(0 0 6px var(--cc));
+  filter: drop-shadow(0 0 5px var(--cc));
 }
 .comp-hex-num {
   font-size: 10px;
   font-weight: 900;
   letter-spacing: 2px;
-  color: color-mix(in srgb, var(--cc) 70%, transparent);
+  color: var(--cc);
+  opacity: 0.55;
   font-family: 'Courier New', monospace;
   margin-left: auto;
 }

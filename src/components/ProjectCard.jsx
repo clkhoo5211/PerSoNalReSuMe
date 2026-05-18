@@ -38,7 +38,7 @@ export default function ProjectCard({ project, index }) {
             onKeyDown={e => e.key === 'Enter' && setOpen(true)}
           >
             <div className="project-media">
-              <ProjectCardCanvas category={project.category} title={project.title} />
+              <ProjectCardCanvas projectId={project.id} category={project.category} title={project.title} />
               <div className="project-category-badge">
                 <span className="tag">{project.category}</span>
                 <span className={`status-dot status-${project.status.toLowerCase().replace(/\s/g, '-')}`}>{project.status}</span>
