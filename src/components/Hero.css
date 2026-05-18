@@ -313,3 +313,21 @@ body.light .glitch-name::after {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* Light mode — tagline "Web3 Dev · AI Engineer" needs dark colours */
+body.light .hero-tagline {
+  background: linear-gradient(90deg, #0369a1 0%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Light mode — subtitle text visible */
+body.light .hero-title {
+  color: #334155;
+}
+
+/* Light mode — cursor visible */
+body.light .cursor {
+  background: #0369a1;
+}
