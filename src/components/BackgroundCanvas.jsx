@@ -139,12 +139,23 @@ function glowCircle(ctx, x, y, r, col, a=1) {
 }
 
 /* ─── main draw ─────────────────────────────────────────── */
-function draw(ctx, w, h, sc, t, tp) {
+function draw(ctx, w, h, sc, t, tp, dayP) {
+  // Merge day palette over default D palette (dark mode only)
+  const DP = dayP ? {
+    bg0:   dayP.bg0,
+    bg1:   dayP.bg1,
+    node1: dayP.node1,
+    node2: dayP.node2,
+    node3: dayP.node3,
+    edge:  dayP.edge,
+    star:  dayP.starC,
+    aurora:[dayP.aurora],
+  } : D;
   ctx.clearRect(0,0,w,h);
 
   // ── 1. Background gradient ─────────────────────────────
-  const bg0 = lerpC(D.bg0, L.bg0, tp);
-  const bg1 = lerpC(D.bg1, L.bg1, tp);
+  const bg0 = lerpC(DP.bg0, L.bg0, tp);
+  const bg1 = lerpC(DP.bg1, L.bg1, tp);
   const grd = ctx.createLinearGradient(0,0,0,h);
   grd.addColorStop(0, rgb(bg0));
   grd.addColorStop(1, rgb(bg1));
@@ -185,7 +196,7 @@ function draw(ctx, w, h, sc, t, tp) {
     const darkA = twinkle*0.9;
     const lightA = twinkle*0.7;
     const a = lerp(darkA, lightA, tp);
-    const col = lerpC(D.star, L.star, tp);
+    const col = lerpC(DP.star, L.star, tp);
     ctx.beginPath();
     ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
     ctx.fillStyle = rgba(col, a);
@@ -193,7 +204,7 @@ function draw(ctx, w, h, sc, t, tp) {
     // Dark mode: tiny cross glint on bright stars
     if(s.r>1.3 && tp<0.5){
       const gl = (1-tp*2)*twinkle*0.4;
-      ctx.strokeStyle = rgba(D.star, gl);
+      ctx.strokeStyle = rgba(DP.star, gl);
       ctx.lineWidth=0.5;
       ctx.beginPath();
       ctx.moveTo(s.x-s.r*2.5,s.y); ctx.lineTo(s.x+s.r*2.5,s.y);
@@ -226,7 +237,7 @@ function draw(ctx, w, h, sc, t, tp) {
   }
 
   // ── 5. Aurora / Cloud wave bands ─────────────────────
-  const aurColors = D.aurora[0];
+  const aurColors = DP.aurora[0];
   const cldColors = L.aurora[0];
   for(const b of sc.bands){
     b.phase += b.phaseSpd;
@@ -257,7 +268,7 @@ function draw(ctx, w, h, sc, t, tp) {
 
   // ── 6. Blockchain hex shapes ──────────────────────────
   const hexA = lerp(0.07, 0.04, tp);
-  const hexCol = lerpC(D.node2, L.node2, tp);
+  const hexCol = lerpC(DP.node2, L.node2, tp);
   for(const hx of sc.hexes){
     hx.x+=hx.vx; hx.y+=hx.vy; hx.rot+=hx.rotSpd;
     if(hx.x<-80) hx.x=w+80; if(hx.x>w+80) hx.x=-80;
@@ -273,7 +284,7 @@ function draw(ctx, w, h, sc, t, tp) {
   }
 
   // ── 7. Network edges ──────────────────────────────────
-  const edgeCol = lerpC(D.edge, L.edge, tp);
+  const edgeCol = lerpC(DP.edge, L.edge, tp);
   for(const e of sc.edges){
     const na=sc.nodes[e.a], nb=sc.nodes[e.b];
     const dist=Math.hypot(na.x-nb.x,na.y-nb.y);
@@ -287,7 +298,7 @@ function draw(ctx, w, h, sc, t, tp) {
   }
 
   // ── 8. Data packets ───────────────────────────────────
-  const pkCol = lerpC(D.node1, L.node1, tp);
+  const pkCol = lerpC(DP.node1, L.node1, tp);
   for(const pk of sc.packets){
     pk.t += pk.spd;
     if(pk.t>1) pk.t=0; if(pk.t<0) pk.t=1;
@@ -332,7 +343,7 @@ function draw(ctx, w, h, sc, t, tp) {
 
   // ── 10. Subtle grid overlay ───────────────────────────
   const gridA = lerp(0.025, 0.04, tp);
-  const gridCol = lerpC(D.node1, L.node2, tp);
+  const gridCol = lerpC(DP.node1, L.node2, tp);
   ctx.strokeStyle=rgba(gridCol, gridA);
   ctx.lineWidth=0.5;
   const gs=Math.min(w,h)/12;
@@ -348,9 +359,9 @@ function draw(ctx, w, h, sc, t, tp) {
 }
 
 /* ─── React component ───────────────────────────────────── */
-export default function BackgroundCanvas({ theme }) {
+export default function BackgroundCanvas({ theme, dayPalette }) {
   const canvasRef = useRef(null);
-  const stateRef  = useRef({ sc:null, tp:0, raf:null, t:0 });
+  const stateRef  = useRef({ sc:null, tp:0, raf:null, t:0, dayP:null });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -381,7 +392,7 @@ export default function BackgroundCanvas({ theme }) {
       const target = state.themeTarget ?? 0;
       state.tp = lerp(state.tp, target, 0.055);
 
-      draw(ctx, canvas.width, canvas.height, state.sc, state.t, state.tp);
+      draw(ctx, canvas.width, canvas.height, state.sc, state.t, state.tp, state.dayP);
     };
     state.raf = requestAnimationFrame(loop);
 
@@ -394,6 +405,10 @@ export default function BackgroundCanvas({ theme }) {
   useEffect(() => {
     stateRef.current.themeTarget = theme === 'light' ? 1 : 0;
   }, [theme]);
+
+  useEffect(() => {
+    stateRef.current.dayP = dayPalette || null;
+  }, [dayPalette]);
 
   return <canvas ref={canvasRef} className="bg-canvas" />;
 }
