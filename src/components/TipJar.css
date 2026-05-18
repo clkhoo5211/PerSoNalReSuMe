@@ -1,0 +1,63 @@
+.tipjar-page { max-width: 800px; }
+.tipjar-subtitle {
+  color: var(--text-muted); font-size: 16px; line-height: 1.7;
+  margin-bottom: var(--sp-xl); max-width: 560px;
+}
+
+.tipjar-grid { display: flex; flex-direction: column; gap: var(--sp-sm); }
+
+.tipjar-card { padding: var(--sp-sm) var(--sp-md); }
+.tipjar-card.open { border-color: var(--border-hi); }
+
+.tipjar-card-header {
+  display: flex; align-items: center; gap: var(--sp-sm);
+  cursor: pointer; user-select: none;
+}
+.tipjar-icon { font-size: 28px; width: 36px; text-align: center; flex-shrink: 0; }
+.tipjar-card-meta { flex: 1; }
+.tipjar-label { font-size: 15px; font-weight: 700; color: var(--text); }
+.tipjar-network { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.tipjar-chevron { font-size: 11px; color: var(--text-dim); transition: transform .2s; }
+
+.tipjar-detail { overflow: hidden; }
+.tipjar-detail-inner {
+  padding-top: var(--sp-sm);
+  border-top: 1px solid var(--border);
+  margin-top: var(--sp-sm);
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+.tipjar-link-btn { align-self: flex-start; }
+
+.tipjar-address-wrap {
+  display: flex; align-items: center; gap: var(--sp-sm);
+  flex-wrap: wrap;
+}
+.tipjar-address {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--primary);
+  background: rgba(56,189,248,0.08);
+  border: 1px solid rgba(56,189,248,0.15);
+  padding: 6px 12px; border-radius: var(--r-sm);
+  word-break: break-all; flex: 1; min-width: 0;
+}
+.tip-copy-btn {
+  font-size: 12px; font-weight: 700; color: var(--primary);
+  background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2);
+  border-radius: var(--r-sm); padding: 6px 14px; cursor: pointer;
+  transition: all .2s; white-space: nowrap; font-family: inherit;
+  flex-shrink: 0;
+}
+.tip-copy-btn:hover { background: rgba(56,189,248,0.2); }
+
+.tipjar-note {
+  font-size: 12px; color: var(--text-muted); margin: 0;
+}
+.tipjar-placeholder-note {
+  font-size: 12px; color: var(--text-dim); font-style: italic; margin: 0;
+}
+
+.tipjar-footer {
+  margin-top: var(--sp-xl); text-align: center;
+  font-size: 15px; color: var(--text-muted);
+}

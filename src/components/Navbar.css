@@ -107,3 +107,11 @@ body.light .navbar.scrolled {
   .navbar-links.open { transform: none; }
   .navbar-links a { font-size: 20px; }
 }
+
+.tip-nav-btn {
+  font-size: 20px; text-decoration: none;
+  padding: 4px 8px; border-radius: var(--r-sm);
+  transition: transform .2s;
+  display: inline-flex; align-items: center;
+}
+.tip-nav-btn:hover { transform: scale(1.2); }

@@ -13,6 +13,7 @@ import Footer from './components/Footer';
 import MediaPlayer from './components/MediaPlayer';
 import CustomCursor from './components/CustomCursor';
 import ProjectDetail from './components/ProjectDetail';
+import TipJar from './components/TipJar';
 import BlogDetail from './components/BlogDetail';
 
 function HomePage() {
@@ -69,6 +70,7 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/projects/:id" element={<ProjectDetail />} />
           <Route path="/blog/:id" element={<BlogDetail />} />
+          <Route path="/tip" element={<TipJar />} />
         </Routes>
       </AnimatePresence>
       <Footer />

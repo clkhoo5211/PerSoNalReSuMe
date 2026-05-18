@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Navbar.css';
 
 const NAV_LINKS = [
@@ -53,6 +54,7 @@ export default function Navbar({ theme, onThemeToggle }) {
       </ul>
 
       <div className="navbar-actions">
+        <Link to="/tip" className="tip-nav-btn" title="Buy me a coffee">☕</Link>
         <button className="theme-toggle" onClick={onThemeToggle} title="Toggle theme">
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>
