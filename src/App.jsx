@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
+import BackgroundCanvas from './components/BackgroundCanvas';
 import Hero from './components/Hero';
 import About from './components/About';
 import LinkTree from './components/LinkTree';
@@ -63,6 +64,7 @@ export default function App() {
 
   return (
     <>
+      <BackgroundCanvas theme={theme} />
       <CustomCursor />
       <Navbar theme={theme} onThemeToggle={toggleTheme} />
       <AnimatePresence mode="wait">

@@ -42,22 +42,13 @@ body.light {
 html { scroll-behavior: smooth; }
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background: var(--bg);
+  background: transparent;
   color: var(--text);
   line-height: 1.65;
-  transition: background .35s, color .35s;
+  transition: color .35s;
   overflow-x: hidden;
 }
-
-/* ── ambient orbs ── */
-body::before {
-  content: '';
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background:
-    radial-gradient(ellipse 900px 600px at 15%  10%,  rgba(56,189,248,.06) 0%,transparent 65%),
-    radial-gradient(ellipse 700px 500px at 85%  85%,  rgba(129,140,248,.07) 0%,transparent 65%),
-    radial-gradient(ellipse 500px 400px at 50%  50%,  rgba(244,114,182,.03) 0%,transparent 70%);
-}
+/* canvas background sits at z-index:0, root content above it */
 #root { position: relative; z-index: 1; }
 
 /* ── scrollbar ── */
