@@ -1,0 +1,91 @@
+.news-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+.news-header .section-title { margin-bottom: 0; }
+.news-refresh-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 6px var(--primary);
+  animation: pulse 1.2s ease-in-out infinite;
+  margin-top: 4px;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
+
+/* Ticker */
+.ticker-wrap {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: rgba(0,212,255,0.06);
+  border: 1px solid rgba(0,212,255,0.15);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+  height: 44px;
+}
+.ticker-label {
+  flex-shrink: 0;
+  padding: 0 14px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: 1.5px;
+  border-right: 1px solid rgba(0,212,255,0.2);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  background: rgba(0,212,255,0.08);
+}
+.ticker-track {
+  display: flex;
+  gap: 60px;
+  animation: ticker-scroll 60s linear infinite;
+  white-space: nowrap;
+  padding: 0 var(--space-md);
+}
+.ticker-track:hover { animation-play-state: paused; }
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker-item {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+.ticker-item:hover { color: var(--primary); }
+
+/* Grid */
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+}
+@media (max-width: 1199px) { .news-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 767px) { .news-grid { grid-template-columns: 1fr; } }
+
+.news-card {
+  text-decoration: none;
+  display: block;
+}
+.news-card-source {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.news-points { font-size: 12px; color: var(--success); font-weight: 600; }
+.news-time { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+.news-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.5;
+}
+.news-card:hover .news-card-title { color: var(--primary); }

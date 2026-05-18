@@ -1,0 +1,57 @@
+name: Fetch AI News
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'   # every 6 hours
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch from AIHot (with HN fallback)
+        run: |
+          # Try aihot first
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "User-Agent: Mozilla/5.0 (compatible; PortfolioBot/1.0)" \
+            -H "Accept: application/json" \
+            "https://aihot.virxact.com/api/public/items?mode=selected&take=30")
+
+          if [ "$STATUS" = "200" ]; then
+            curl -s \
+              -H "User-Agent: Mozilla/5.0 (compatible; PortfolioBot/1.0)" \
+              -H "Accept: application/json" \
+              "https://aihot.virxact.com/api/public/items?mode=selected&take=30" \
+              > public/news.json
+            echo "Fetched from AIHot (status $STATUS)"
+          else
+            # Fallback: HackerNews Algolia
+            curl -s \
+              "https://hn.algolia.com/api/v1/search_by_date?tags=story&query=artificial+intelligence+AI&hitsPerPage=30" \
+              | node -e "
+                const d = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
+                const items = (d.hits||[]).map(h => ({
+                  id: h.objectID,
+                  title: h.title,
+                  url: h.url || 'https://news.ycombinator.com/item?id=' + h.objectID,
+                  source: 'HackerNews',
+                  points: h.points,
+                  time: h.created_at
+                }));
+                process.stdout.write(JSON.stringify(items));
+              " > public/news.json
+            echo "Fetched from HackerNews (AIHot returned $STATUS)"
+          fi
+
+      - name: Commit news data
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add public/news.json
+          git diff --staged --quiet || git commit -m "chore: update AI news feed $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push

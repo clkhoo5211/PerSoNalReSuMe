@@ -1,0 +1,53 @@
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2xl);
+  margin-bottom: var(--space-2xl);
+}
+.about-bio p { color: var(--text-muted); margin-bottom: var(--space-sm); }
+
+.about-experience h3, .skills-section h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+  color: var(--text);
+}
+.timeline { display: flex; flex-direction: column; gap: var(--space-md); }
+.timeline-item {
+  display: flex;
+  gap: var(--space-sm);
+  position: relative;
+}
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 20px;
+  bottom: -20px;
+  width: 1px;
+  background: rgba(0,212,255,0.2);
+}
+.timeline-item:last-child::before { display: none; }
+.timeline-dot {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 8px var(--primary);
+  margin-top: 3px;
+}
+.timeline-role { font-size: 15px; font-weight: 700; color: var(--text); }
+.timeline-company { font-size: 13px; color: var(--primary); margin: 2px 0 4px; }
+.timeline-desc { font-size: 14px; color: var(--text-muted); }
+
+.skills-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md); }
+.skill-card { cursor: default; }
+.skill-category { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: var(--space-xs); }
+.skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+@media (max-width: 1199px) { .skills-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 767px) {
+  .about-grid { grid-template-columns: 1fr; }
+  .skills-grid { grid-template-columns: 1fr 1fr; }
+}
