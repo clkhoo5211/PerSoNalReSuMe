@@ -1,3 +1,43 @@
+/* ── Shimmer sweep animation ────────────────────────────── */
+@keyframes lt-border-pulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(56,189,248,0.12), inset 0 0 0 rgba(56,189,248,0); }
+  50%       { box-shadow: 0 0 18px rgba(56,189,248,0.40), inset 0 0 8px rgba(56,189,248,0.06); }
+}
+@keyframes lt-shimmer-slide {
+  0%   { transform: translateX(-120%) skewX(-18deg); }
+  100% { transform: translateX(260%)  skewX(-18deg); }
+}
+
+/* staggered pulse: each button fires 0.45s after the previous */
+.lt-pill,
+.lt-action {
+  animation: lt-border-pulse 2.8s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 0.45s);
+}
+
+/* shimmer sweep child */
+.lt-shimmer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+.lt-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 40%; height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.18) 50%,
+    transparent 100%
+  );
+  animation: lt-shimmer-slide 2.8s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 0.45s);
+}
+
 .linktree-section {
   padding: 28px var(--space-xl);
   display: flex;
@@ -29,6 +69,8 @@
 }
 
 .lt-pill {
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -68,6 +110,8 @@
 }
 
 .lt-action {
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   gap: 6px;

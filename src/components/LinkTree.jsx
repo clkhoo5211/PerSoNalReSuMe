@@ -43,6 +43,7 @@ export default function LinkTree() {
               target="_blank"
               rel="noopener noreferrer"
               className="lt-pill"
+              style={{ '--i': i }}
               initial={{ opacity: 0, scale: 0.75 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
@@ -50,6 +51,7 @@ export default function LinkTree() {
               whileHover={{ scale: 1.12, y: -2 }}
               title={link.label}
             >
+              <span className="lt-shimmer" />
               <span className="lt-pill-icon">{link.icon}</span>
               <span className="lt-pill-label">{link.label}</span>
             </motion.a>
@@ -68,6 +70,7 @@ export default function LinkTree() {
               rel="noopener noreferrer"
               download={link.url.endsWith('.pdf') ? true : undefined}
               className={`lt-action${link.primary ? ' primary' : ''}`}
+              style={{ '--i': i }}
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -75,6 +78,7 @@ export default function LinkTree() {
               whileHover={{ scale: 1.04 }}
               onClick={(e) => handleActionClick(e, link)}
             >
+              <span className="lt-shimmer" />
               {link.icon} {link.label}
             </motion.a>
           ))}

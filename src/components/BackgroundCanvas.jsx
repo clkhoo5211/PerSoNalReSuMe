@@ -39,18 +39,18 @@ const L = {                // light (sky/daylight)
 
 /* ─── scene setup ───────────────────────────────────────── */
 function buildScene(w, h) {
-  // Stars / motes
-  const stars = Array.from({length:180},()=>({
+  // Stars / motes — reduced from 180 → 100 for perf
+  const stars = Array.from({length:100},()=>({
     x: Math.random()*w, y: Math.random()*h,
     r: 0.4+Math.random()*1.8,
     phase: Math.random()*Math.PI*2,
     spd: 0.4+Math.random()*1.2,
-    ly: Math.random()*h,           // parallax layer drift
+    ly: Math.random()*h,
     vx: (Math.random()-0.5)*0.04,
   }));
 
-  // Blockchain network nodes
-  const nodes = Array.from({length:28},(_,i)=>({
+  // Blockchain network nodes — reduced from 28 → 18
+  const nodes = Array.from({length:18},(_,i)=>({
     x: Math.random()*w, y: Math.random()*h,
     r: i<5 ? 7+Math.random()*4 : 3+Math.random()*3,
     hub: i<5,
@@ -75,8 +75,8 @@ function buildScene(w, h) {
     .filter(()=>Math.random()<0.4)
     .map(e=>({ edge:e, t:Math.random(), spd:(0.002+Math.random()*0.003)*(Math.random()<0.5?1:-1) }));
 
-  // Aurora / cloud bands
-  const bands = Array.from({length:5},(_,i)=>({
+  // Aurora / cloud bands — reduced from 5 → 3
+  const bands = Array.from({length:3},(_,i)=>({
     yBase: h*(0.55+i*0.1),
     amp:   30+Math.random()*40,
     freq:  0.002+Math.random()*0.001,
@@ -85,8 +85,8 @@ function buildScene(w, h) {
     ci: i,   // color index
   }));
 
-  // Floating hex shapes (blockchain motif)
-  const hexes = Array.from({length:8},()=>({
+  // Floating hex shapes — reduced from 8 → 5
+  const hexes = Array.from({length:5},()=>({
     x: Math.random()*w, y: Math.random()*h,
     size: 18+Math.random()*32,
     rot: Math.random()*Math.PI,
@@ -99,8 +99,8 @@ function buildScene(w, h) {
   // Sun / glow (only visible in light mode)
   const sun = { x: w*0.85, y: h*0.12, r: 80 };
 
-  // Cloud shapes (only visible in light mode)
-  const clouds = Array.from({length:7},()=>({
+  // Cloud shapes — reduced from 7 → 5
+  const clouds = Array.from({length:5},()=>({
     x: Math.random()*w*1.4 - w*0.2,
     y: h*(0.05+Math.random()*0.35),
     w: 120+Math.random()*180,
@@ -367,7 +367,7 @@ export default function BackgroundCanvas({ theme }) {
     const ro = new ResizeObserver(resize);
     ro.observe(document.body);
 
-    const TARGET_FPS = 40;
+    const TARGET_FPS = 28;
     const FRAME_MS   = 1000 / TARGET_FPS;
     let last = 0;
 
@@ -379,7 +379,7 @@ export default function BackgroundCanvas({ theme }) {
 
       // Smooth theme lerp toward current target
       const target = state.themeTarget ?? 0;
-      state.tp = lerp(state.tp, target, 0.025);
+      state.tp = lerp(state.tp, target, 0.055);
 
       draw(ctx, canvas.width, canvas.height, state.sc, state.t, state.tp);
     };
