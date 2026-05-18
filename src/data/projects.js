@@ -227,6 +227,138 @@ export const projects = [
     challenge: 'Blockchain data volume is enormous — millions of transactions per day. Processing it in real time while keeping the anomaly model accurate required an efficient streaming architecture and incremental model updates.',
     solution: 'Kafka-based event stream feeds a lightweight Isolation Forest model for anomaly scoring. Suspicious addresses are clustered using a GNN on the transaction graph. Results surface in a Vue.js dashboard with live WebSocket updates.',
   },
+  /* ── Traditional E-Commerce ──────────────────────────── */
+  {
+    id: 'traditional-ecommerce',
+    title: 'Traditional E-Commerce Platform',
+    category: 'FullStack',
+    status: 'Live',
+    description: 'Full-featured B2C e-commerce platform with product catalogue management, category filtering, cart, checkout flow, order tracking, and seller dashboard. Built for high-traffic retail operations with SEO-optimised storefront.',
+    tech: ['PHP', 'Laravel', 'Vue.js', 'MySQL', 'RESTful API', 'Stripe', 'Redis'],
+    liveUrl: '#', sourceUrl: '#', media: [], featured: false,
+    highlights: [
+      'Product catalogue with advanced filtering & search',
+      'Cart, wishlist, and guest checkout flows',
+      'Stripe & FPX payment gateway integration',
+      'Seller dashboard with inventory & order management',
+    ],
+    challenge: 'Handling flash-sale traffic spikes without degrading the checkout experience for thousands of concurrent shoppers.',
+    solution: 'Redis-backed session and cart caching, queue-based order processing, and CDN-served product images reduced checkout latency by 70% under peak load.',
+  },
+
+  /* ── Rewarding System ─────────────────────────────────── */
+  {
+    id: 'rewarding-system',
+    title: 'Customer Loyalty & Rewards System',
+    category: 'FullStack',
+    status: 'Live',
+    description: 'Gamified loyalty platform where customers earn points on every purchase, unlock tiered membership levels, redeem rewards, and participate in referral campaigns. Integrates with POS and e-commerce systems via API.',
+    tech: ['Node.js', 'Vue.js', 'MySQL', 'RESTful API', 'Redis', 'Laravel'],
+    liveUrl: '#', sourceUrl: '#', media: [], featured: false,
+    highlights: [
+      'Points engine with configurable earn/burn rules',
+      'Bronze → Silver → Gold → Platinum tier system',
+      'Referral campaigns with automated reward payouts',
+      'POS & e-commerce webhook integration',
+    ],
+    challenge: 'Ensuring point transactions are atomic and fraud-proof across concurrent redemptions without blocking high-frequency checkout flows.',
+    solution: 'Implemented optimistic locking on point ledger rows and a Redis-based idempotency layer so duplicate webhook events never double-award points.',
+  },
+
+  /* ── Shopping Cart ────────────────────────────────────── */
+  {
+    id: 'shopping-cart',
+    title: 'Smart Shopping Cart Engine',
+    category: 'FullStack',
+    status: 'Live',
+    description: 'Reusable headless shopping cart engine with persistent sessions, real-time price recalculation, multi-currency support, promo-code engine, and tax calculation rules. Designed as a drop-in microservice for any storefront.',
+    tech: ['Node.js', 'Vue.js', 'Redis', 'MySQL', 'RESTful API', 'WebSockets'],
+    liveUrl: '#', sourceUrl: '#', media: [], featured: false,
+    highlights: [
+      'Persistent cart across devices (JWT session)',
+      'Real-time price & stock recalculation via WebSocket',
+      'Promo codes, bundle discounts, flash-sale pricing',
+      'Multi-currency + auto tax by region',
+    ],
+    challenge: 'Keeping cart state consistent when product prices or stock levels change mid-session without disrupting the user\'s shopping flow.',
+    solution: 'WebSocket broadcast pushes delta updates to live cart sessions. Stale-price items are flagged inline with the new price so users stay informed without losing their cart contents.',
+  },
+
+  /* ── Kopitiam Pipeline System ─────────────────────────── */
+  {
+    id: 'kopitiam-system',
+    title: 'Kopitiam Full Pipeline System',
+    category: 'FullStack',
+    status: 'Live',
+    description: 'End-to-end F&B management system for Malaysian kopitiam operators — from digital menu ordering and kitchen display to cashier POS, inventory tracking, and daily revenue reports. Designed for multi-stall hawker operations.',
+    tech: ['Vue.js', 'Node.js', 'MySQL', 'Laravel', 'WebSockets', 'RESTful API'],
+    liveUrl: '#', sourceUrl: '#', media: [], featured: true,
+    highlights: [
+      'QR-code table ordering → kitchen display system',
+      'Multi-stall support with per-stall dashboards',
+      'Real-time order flow: ordered → preparing → ready',
+      'Daily P&L, best-seller, and waste reports',
+    ],
+    challenge: 'Kopitiam operators are non-technical. The system had to be robust enough for high-speed lunch rushes while simple enough for a hawker uncle to operate with a tablet.',
+    solution: 'Designed a single-screen kitchen display with colour-coded order states and audio alerts. Tablet UI uses large touch targets and offline-first local caching so a Wi-Fi blip never halts the kitchen.',
+  },
+
+  /* ── Invoicing System ─────────────────────────────────── */
+  {
+    id: 'invoicing-system',
+    title: 'Smart Invoicing & Billing System',
+    category: 'FullStack',
+    status: 'Live',
+    description: 'Automated invoicing platform supporting recurring billing, multi-currency invoices, payment reminders, partial payments, and credit notes. Integrates with accounting systems and generates Malaysia-compliant e-invoices (MyInvois LHDN).',
+    tech: ['PHP', 'Laravel', 'Vue.js', 'MySQL', 'PDF generation', 'Stripe', 'RESTful API'],
+    liveUrl: '#', sourceUrl: '#', media: [], featured: false,
+    highlights: [
+      'MyInvois LHDN e-invoice compliance (Malaysia)',
+      'Recurring billing with auto-renewal logic',
+      'Payment reminders & overdue escalation',
+      'Multi-currency with exchange-rate sync',
+    ],
+    challenge: 'Malaysia\'s MyInvois e-invoicing mandate required real-time submission to LHDN\'s API with digital signatures, while still generating human-readable PDFs for clients.',
+    solution: 'Built a dual-output pipeline: LHDN XML submission with RSA signing happens asynchronously in a queue job, while the PDF is generated instantly for the client email — both linked to the same invoice record.',
+  },
+
+  /* ── Super App ────────────────────────────────────────── */
+  {
+    id: 'super-app',
+    title: 'Super App Platform',
+    category: 'FullStack',
+    status: 'Beta',
+    description: 'All-in-one consumer super app combining e-wallet, food delivery, ride-hailing booking, bill payments, loyalty rewards, and a mini-program marketplace. Inspired by the Grab/WeChat model for Southeast Asian markets.',
+    tech: ['iOS', 'Android', 'Node.js', 'Vue.js', 'MySQL', 'RESTful API', 'WebSockets', 'Redis'],
+    liveUrl: '#', sourceUrl: '#', media: [], featured: true,
+    highlights: [
+      'E-wallet with QR pay, top-up, and P2P transfer',
+      'Food delivery with real-time driver tracking',
+      'Mini-program SDK for third-party services',
+      'Unified loyalty points across all services',
+    ],
+    challenge: 'Coordinating real-time state across five independent service domains (wallet, delivery, ride, bills, rewards) without creating a monolithic backend that becomes a single point of failure.',
+    solution: 'Domain-driven microservices architecture with an event bus (Redis Streams) synchronising cross-domain state. Each service owns its data; the super-app shell aggregates via a BFF GraphQL gateway.',
+  },
+
+  /* ── News App with MCP ────────────────────────────────── */
+  {
+    id: 'news-mcp',
+    title: 'AI News App with MCP Services',
+    category: 'AI',
+    status: 'Beta',
+    description: 'Intelligent news aggregator powered by Anthropic\'s Model Context Protocol (MCP). AI agents autonomously fetch, summarise, fact-check, and categorise news from 50+ sources. Users get personalised feeds, AI-written briefs, and real-time topic alerts.',
+    tech: ['Python', 'MCP (Anthropic)', 'Claude API', 'Node.js', 'Vue.js', 'PostgreSQL', 'Redis'],
+    liveUrl: '#', sourceUrl: '#', media: [], featured: true,
+    highlights: [
+      'MCP tool servers: web-fetch, search, fact-check, summarise',
+      'Claude-powered personalised news briefs',
+      'Real-time topic alerts via WebSocket',
+      'Bias detection and source credibility scoring',
+    ],
+    challenge: 'News changes every minute. Having an AI produce accurate, unbiased summaries at scale without hallucinating facts or reproducing paywalled content required tight grounding and source attribution.',
+    solution: 'MCP tool chain: a fetch-and-extract tool pulls article text, a search tool cross-references claims against multiple sources, and Claude synthesises a grounded brief with inline citations. All tool calls are logged for auditability.',
+  },
 ];
 
 export const categories = ['All', 'Web3', 'FullStack', 'AI'];

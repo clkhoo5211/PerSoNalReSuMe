@@ -709,20 +709,538 @@ function drawAIAnalytics(ctx, w, h, t) {
   ctx.fillText('AI BLOCKCHAIN ANALYTICS', w/2, h-14);
 }
 
+/* ────────────────────────────────────────────────────────── *
+ * CRYPTO EXCHANGE FIX — animated order quantities per frame  *
+ * ────────────────────────────────────────────────────────── */
+function drawCryptoExchangeV2(ctx, w, h, t) {
+  ctx.fillStyle='#090920'; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='rgba(99,102,241,0.07)'; ctx.lineWidth=1;
+  for(let x=0;x<w;x+=32){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(let y=0;y<h;y+=24){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+
+  // animate ask quantities with sine offsets
+  const asks=[
+    {price:'43,250',base:0.82},{price:'43,240',base:1.45},{price:'43,230',base:0.63},
+    {price:'43,220',base:2.10},{price:'43,210',base:0.95},
+  ];
+  const bids=[
+    {price:'43,190',base:1.20},{price:'43,180',base:0.88},{price:'43,170',base:2.55},
+    {price:'43,160',base:0.71},{price:'43,150',base:1.38},
+  ];
+  const rowH=16, startY=26, colW=w/2-10;
+  ctx.font='7px monospace';
+  ctx.fillStyle='rgba(148,163,184,0.5)'; ctx.textAlign='left';
+  ctx.fillText('ASKS',14,startY-6); ctx.fillText('BIDS',colW+24,startY-6);
+
+  asks.forEach((a,i)=>{
+    const qty = Math.max(0.1, a.base + Math.sin(t*0.06+i*0.9)*0.3);
+    const y=startY+i*rowH;
+    ctx.fillStyle='rgba(244,63,94,0.12)';
+    ctx.fillRect(14,y,colW*qty/3,rowH-2);
+    ctx.fillStyle='rgba(244,63,94,0.9)'; ctx.fillText(a.price,16,y+10);
+    ctx.fillStyle='rgba(148,163,184,0.6)'; ctx.fillText(qty.toFixed(2),14+colW-38,y+10);
+  });
+  bids.forEach((b,i)=>{
+    const qty = Math.max(0.1, b.base + Math.sin(t*0.06+i*1.3+2)*0.3);
+    const y=startY+i*rowH;
+    ctx.fillStyle='rgba(16,185,129,0.12)';
+    ctx.fillRect(colW+24,y,colW*qty/3,rowH-2);
+    ctx.fillStyle='rgba(16,185,129,0.9)'; ctx.fillText(b.price,colW+26,y+10);
+    ctx.fillStyle='rgba(148,163,184,0.6)'; ctx.fillText(qty.toFixed(2),colW+24+colW-38,y+10);
+  });
+
+  // match flash
+  const matchPulse=0.4+0.6*Math.abs(Math.sin(t*0.08));
+  const spreadY=startY+5*rowH+4;
+  roundRect(ctx,w/2-32,spreadY,64,14,4);
+  ctx.fillStyle=`rgba(251,191,36,${0.15+matchPulse*0.2})`; ctx.fill();
+  ctx.fillStyle=`rgba(251,191,36,${0.6+matchPulse*0.4})`; ctx.font='bold 7px monospace'; ctx.textAlign='center';
+  ctx.fillText('▲ MATCHED',w/2,spreadY+9);
+
+  // live price ticker
+  const price=(43200+Math.sin(t*0.04)*80).toFixed(0);
+  ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.font='bold 10px monospace'; ctx.textAlign='center';
+  ctx.fillText(`BTC $${price}`,w/2,h-28);
+
+  ctx.fillStyle='#6366F1'; ctx.font='bold 12px Inter,sans-serif';
+  ctx.fillText('CRYPTO EXCHANGE · ORDER BOOK',w/2,h-14);
+}
+
+/* ────────────────────────────────────────────────────────── *
+ * NEW-1. TRADITIONAL E-COMMERCE — product grid → cart flow  *
+ * ────────────────────────────────────────────────────────── */
+function drawEcommerceTraditional(ctx, w, h, t) {
+  const bg=ctx.createLinearGradient(0,0,w,h);
+  bg.addColorStop(0,'#0a0a18'); bg.addColorStop(1,'#12101e');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+
+  // product cards grid
+  const cols=4, rows=2, cw=56, ch=52, gx=14, gy=18, gap=8;
+  const products=[
+    {col:'#f472b6',label:'👗'},{col:'#38bdf8',label:'👟'},
+    {col:'#34d399',label:'📱'},{col:'#fb923c',label:'⌚'},
+    {col:'#a78bfa',label:'💻'},{col:'#f43f5e',label:'🎧'},
+    {col:'#facc15',label:'📷'},{col:'#818cf8',label:'🎮'},
+  ];
+  products.forEach((p,i)=>{
+    const col=i%cols, row=Math.floor(i/cols);
+    const x=gx+col*(cw+gap), y=gy+row*(ch+gap);
+    const pulse=0.6+0.4*Math.sin(t*0.05+i*0.7);
+    ctx.shadowColor=p.col; ctx.shadowBlur=6*pulse;
+    roundRect(ctx,x,y,cw,ch,6);
+    ctx.fillStyle=`${p.col}18`; ctx.fill();
+    ctx.strokeStyle=`${p.col}${Math.floor(pulse*160).toString(16).padStart(2,'0')}`; ctx.lineWidth=1; ctx.stroke();
+    ctx.shadowBlur=0;
+    ctx.font='18px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(p.label,x+cw/2,y+ch/2+6);
+  });
+
+  // flying-to-cart animation
+  const flyT=((t*0.012)%1);
+  const srcIdx=Math.floor(t*0.015)%8;
+  const sc2=srcIdx%cols, sr=Math.floor(srcIdx/cols);
+  const sx=gx+sc2*(cw+gap)+cw/2, sy=gy+sr*(ch+gap)+ch/2;
+  const cartX=w-22, cartY=h/2;
+  const fx=lerp(sx,cartX,easeInOut(flyT));
+  const fy=lerp(sy,cartY,easeInOut(flyT))-Math.sin(flyT*Math.PI)*30;
+  ctx.beginPath(); ctx.arc(fx,fy,5*(1-flyT*0.5),0,Math.PI*2);
+  ctx.fillStyle=`rgba(255,255,255,${0.9*(1-flyT)})`; ctx.fill();
+
+  // cart icon
+  const cartPulse=0.7+0.3*Math.sin(t*0.1);
+  ctx.font='22px sans-serif'; ctx.textAlign='right';
+  ctx.fillText('🛒',w-6,h/2+8);
+  // item count badge
+  const count=1+Math.floor(t*0.015)%8;
+  ctx.beginPath(); ctx.arc(w-8,h/2-12,8,0,Math.PI*2);
+  ctx.fillStyle=`rgba(244,63,94,${cartPulse})`; ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font='bold 8px monospace'; ctx.textAlign='center';
+  ctx.fillText(count,w-8,h/2-9);
+
+  ctx.fillStyle='#f472b6'; ctx.font='bold 12px Inter,sans-serif';
+  ctx.fillText('TRADITIONAL E-COMMERCE',w/2,h-14);
+}
+
+/* ────────────────────────────────────────────────────────── *
+ * NEW-2. REWARDS SYSTEM — points collecting + tier badges   *
+ * ────────────────────────────────────────────────────────── */
+function drawRewards(ctx, w, h, t) {
+  const bg=ctx.createLinearGradient(0,0,w,h);
+  bg.addColorStop(0,'#0a0800'); bg.addColorStop(1,'#1a1200');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+
+  // tiers
+  const tiers=[
+    {label:'BRONZE',  color:'#cd7f32', threshold:0.25},
+    {label:'SILVER',  color:'#c0c0c0', threshold:0.50},
+    {label:'GOLD',    color:'#ffd700', threshold:0.75},
+    {label:'PLATINUM',color:'#e5e4e2', threshold:1.00},
+  ];
+  const barX=16, barY=20, barW=w*0.55, barH=10;
+  // progress
+  const progress=(Math.sin(t*0.018)*0.5+0.5)*0.92+0.04;
+  tiers.forEach((tier,i)=>{
+    const tx=barX+barW*tier.threshold-12;
+    ctx.fillStyle='rgba(255,255,255,0.12)';
+    roundRect(ctx,tx-1,barY-8,26,26,4); ctx.fill();
+    ctx.fillStyle=tier.color; ctx.font='6px monospace'; ctx.textAlign='center';
+    ctx.fillText(tier.label.slice(0,2),tx+12,barY+5);
+  });
+  // bar track
+  roundRect(ctx,barX,barY+10,barW,barH,5);
+  ctx.fillStyle='rgba(255,255,255,0.08)'; ctx.fill();
+  // fill
+  const grad=ctx.createLinearGradient(barX,0,barX+barW,0);
+  grad.addColorStop(0,'#cd7f32'); grad.addColorStop(0.5,'#ffd700'); grad.addColorStop(1,'#e5e4e2');
+  roundRect(ctx,barX,barY+10,barW*progress,barH,5);
+  ctx.fillStyle=grad; ctx.fill();
+  // points label
+  const pts=Math.floor(progress*10000);
+  ctx.fillStyle='#facc15'; ctx.font='bold 11px monospace'; ctx.textAlign='left';
+  ctx.fillText(`${pts.toLocaleString()} pts`,barX,barY+36);
+
+  // flying coins
+  for(let i=0;i<6;i++){
+    const ct=((t*0.014+i*0.18)%1);
+    const cx2=barX+Math.random()*barW*(i/6)+10;  // static per i
+    const seedX=barX+(i*73)%(barW-20);
+    const cy2=h*0.7-easeInOut(ct)*h*0.55;
+    const a=1-ct;
+    ctx.beginPath(); ctx.arc(seedX,cy2,5*(1-ct*0.5),0,Math.PI*2);
+    ctx.fillStyle=`rgba(250,204,21,${a*0.85})`; ctx.fill();
+    ctx.fillStyle=`rgba(250,204,21,${a*0.5})`; ctx.font='8px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('+10',seedX,cy2-8);
+  }
+
+  // leaderboard strip
+  const leaders=[{rank:'#1',name:'User A',pts:'9,840'},{rank:'#2',name:'You',pts:'8,200'},{rank:'#3',name:'User C',pts:'7,510'}];
+  leaders.forEach((l,i)=>{
+    const lx=barX+barW+12, ly=barY+i*24;
+    const isYou=l.name==='You';
+    ctx.fillStyle=isYou?'rgba(250,204,21,0.12)':'rgba(255,255,255,0.04)';
+    roundRect(ctx,lx,ly,w-lx-8,20,4); ctx.fill();
+    ctx.fillStyle=isYou?'#facc15':'rgba(148,163,184,0.7)';
+    ctx.font=`${isYou?'bold ':' '}7px monospace`; ctx.textAlign='left';
+    ctx.fillText(`${l.rank} ${l.name}`,lx+5,ly+13);
+    ctx.fillStyle='rgba(148,163,184,0.5)'; ctx.textAlign='right';
+    ctx.fillText(l.pts,lx+w-lx-14,ly+13);
+  });
+
+  ctx.fillStyle='#ffd700'; ctx.font='bold 12px Inter,sans-serif'; ctx.textAlign='center';
+  ctx.fillText('LOYALTY & REWARDS SYSTEM',w/2,h-14);
+}
+
+/* ────────────────────────────────────────────────────────── *
+ * NEW-3. SHOPPING CART — items + live total recalculation    *
+ * ────────────────────────────────────────────────────────── */
+function drawShoppingCart(ctx, w, h, t) {
+  ctx.fillStyle='#08100a'; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='rgba(16,185,129,0.06)'; ctx.lineWidth=1;
+  for(let x=0;x<w;x+=28){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+
+  const items=[
+    {emoji:'👟',name:'Sneakers',price:89.90,qty:1},
+    {emoji:'👗',name:'Dress',price:55.00,qty:2},
+    {emoji:'📱',name:'Phone Case',price:15.50,qty:3},
+  ];
+  const ix=14, iw=w-28;
+  items.forEach((item,i)=>{
+    const iy=14+i*42;
+    // slide in from left
+    const slideT=clamp(t*0.015-i*0.3,0,1);
+    const ox=(1-easeInOut(slideT))*(-w);
+    ctx.fillStyle='rgba(255,255,255,0.04)';
+    roundRect(ctx,ix+ox,iy,iw,36,6); ctx.fill();
+    ctx.strokeStyle='rgba(16,185,129,0.15)'; ctx.lineWidth=0.8;
+    roundRect(ctx,ix+ox,iy,iw,36,6); ctx.stroke();
+    ctx.font='16px sans-serif'; ctx.textAlign='left';
+    ctx.fillText(item.emoji,ix+8+ox,iy+24);
+    ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.font='bold 8px Inter'; ctx.textAlign='left';
+    ctx.fillText(item.name,ix+30+ox,iy+14);
+    ctx.fillStyle='rgba(148,163,184,0.6)'; ctx.font='7px monospace';
+    ctx.fillText(`x${item.qty}`,ix+30+ox,iy+26);
+    ctx.fillStyle='#10b981'; ctx.font='bold 9px monospace'; ctx.textAlign='right';
+    ctx.fillText(`$${(item.price*item.qty).toFixed(2)}`,ix+iw-6+ox,iy+24);
+  });
+
+  // divider
+  ctx.strokeStyle='rgba(16,185,129,0.15)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(ix,h-54); ctx.lineTo(ix+iw,h-54); ctx.stroke();
+
+  // total with counter animation
+  const totalBase=89.90+55*2+15.5*3;
+  const displayTotal=totalBase+Math.sin(t*0.04)*2;
+  ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.font='8px monospace'; ctx.textAlign='left';
+  ctx.fillText('TOTAL',ix,h-40);
+  ctx.fillStyle='#10b981'; ctx.font='bold 14px monospace'; ctx.textAlign='right';
+  ctx.fillText(`$${displayTotal.toFixed(2)}`,ix+iw,h-38);
+
+  // checkout button pulse
+  const btnPulse=0.6+0.4*Math.sin(t*0.1);
+  roundRect(ctx,ix,h-30,iw,20,5);
+  ctx.fillStyle=`rgba(16,185,129,${0.7+btnPulse*0.3})`; ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font='bold 8px Inter'; ctx.textAlign='center';
+  ctx.fillText('CHECKOUT →',w/2,h-17);
+
+  ctx.fillStyle='#10b981'; ctx.font='bold 12px Inter,sans-serif';
+  ctx.fillText('SMART SHOPPING CART',w/2,h-6);
+}
+
+/* ────────────────────────────────────────────────────────── *
+ * NEW-4. KOPITIAM SYSTEM — QR order → kitchen → serve flow  *
+ * ────────────────────────────────────────────────────────── */
+function drawKopitiam(ctx, w, h, t) {
+  const bg=ctx.createLinearGradient(0,0,w,h);
+  bg.addColorStop(0,'#100800'); bg.addColorStop(1,'#1a1000');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+
+  // pipeline stages
+  const stages=[
+    {label:'QR ORDER',icon:'📱',color:'#38bdf8'},
+    {label:'KITCHEN', icon:'👨‍🍳',color:'#fb923c'},
+    {label:'READY',   icon:'🔔',color:'#10b981'},
+    {label:'SERVED',  icon:'☕',color:'#facc15'},
+  ];
+  const sw=(w-20)/4, sy=18;
+  stages.forEach((s,i)=>{
+    const sx2=10+i*sw;
+    const active=Math.floor((t*0.012)%stages.length)===i;
+    const pulse=active?0.8+0.2*Math.sin(t*0.15):0.4;
+    ctx.shadowColor=s.color; ctx.shadowBlur=active?16:4;
+    roundRect(ctx,sx2+4,sy,sw-8,50,8);
+    ctx.fillStyle=active?`${s.color}22`:`rgba(255,255,255,0.04)`; ctx.fill();
+    ctx.strokeStyle=`${s.color}${Math.floor(pulse*200).toString(16).padStart(2,'0')}`; ctx.lineWidth=active?1.8:0.8; ctx.stroke();
+    ctx.shadowBlur=0;
+    ctx.font='18px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(s.icon,sx2+sw/2,sy+28);
+    ctx.fillStyle=active?s.color:'rgba(148,163,184,0.5)'; ctx.font=`${active?'bold ':''}6px monospace`;
+    ctx.fillText(s.label,sx2+sw/2,sy+46);
+    // connector arrow
+    if(i<stages.length-1){
+      const ax=sx2+sw-4, ay2=sy+25;
+      const arrowProgress=clamp(((t*0.012)%stages.length)-i,0,1);
+      ctx.strokeStyle=`rgba(255,255,255,${0.15+arrowProgress*0.3})`; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(ax,ay2); ctx.lineTo(ax+6,ay2); ctx.stroke();
+    }
+  });
+
+  // orders list
+  const orders=[
+    {id:'#042',item:'Kopi O',status:0},{id:'#043',item:'Nasi Lemak',status:1},
+    {id:'#044',item:'Teh Tarik',status:2},{id:'#045',item:'Roti Canai',status:3},
+  ];
+  orders.forEach((o,i)=>{
+    const oy=78+i*22;
+    const s=stages[o.status];
+    const rowPulse=0.6+0.4*Math.sin(t*0.06+i*0.8);
+    ctx.fillStyle='rgba(255,255,255,0.04)';
+    roundRect(ctx,10,oy,w-20,18,4); ctx.fill();
+    ctx.fillStyle=s.color; ctx.font='bold 7px monospace'; ctx.textAlign='left';
+    ctx.fillText(o.id,14,oy+12);
+    ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.font='7px monospace';
+    ctx.fillText(o.item,40,oy+12);
+    roundRect(ctx,w-62,oy+3,50,12,3);
+    ctx.fillStyle=`${s.color}28`; ctx.fill();
+    ctx.fillStyle=s.color; ctx.font='bold 6px monospace'; ctx.textAlign='center';
+    ctx.fillText(s.label,w-37,oy+12);
+  });
+
+  ctx.fillStyle='#fb923c'; ctx.font='bold 12px Inter,sans-serif'; ctx.textAlign='center';
+  ctx.fillText('KOPITIAM PIPELINE SYSTEM',w/2,h-14);
+}
+
+/* ────────────────────────────────────────────────────────── *
+ * NEW-5. INVOICING SYSTEM — invoice building + send         *
+ * ────────────────────────────────────────────────────────── */
+function drawInvoicing(ctx, w, h, t) {
+  ctx.fillStyle='#080d18'; ctx.fillRect(0,0,w,h);
+
+  const cycle=t%120;
+  const ix=18, iy=14, iw=w*0.56, ih=h-34;
+
+  // invoice paper
+  ctx.shadowColor='rgba(56,189,248,0.3)'; ctx.shadowBlur=12;
+  roundRect(ctx,ix,iy,iw,ih,6);
+  ctx.fillStyle='rgba(255,255,255,0.06)'; ctx.fill();
+  ctx.strokeStyle='rgba(56,189,248,0.25)'; ctx.lineWidth=1; ctx.stroke();
+  ctx.shadowBlur=0;
+
+  // header
+  ctx.fillStyle='rgba(56,189,248,0.9)'; ctx.font='bold 9px monospace'; ctx.textAlign='left';
+  ctx.fillText('INVOICE #INV-2024-089',ix+8,iy+14);
+  ctx.fillStyle='rgba(148,163,184,0.5)'; ctx.font='6px monospace';
+  ctx.fillText('Due: 30 Nov 2024',ix+8,iy+24);
+
+  // line items typing in
+  const lineItems=[
+    {desc:'Web Development',qty:'1',rate:'3,500.00'},
+    {desc:'API Integration', qty:'3',rate:'600.00'},
+    {desc:'Maintenance',     qty:'1',rate:'400.00'},
+  ];
+  lineItems.forEach((li,i)=>{
+    const ly=iy+36+i*18;
+    const chars=Math.min(li.desc.length,Math.floor(Math.max(0,cycle-i*14)*0.8));
+    ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.font='6.5px monospace'; ctx.textAlign='left';
+    ctx.fillText(li.desc.slice(0,chars)+(chars<li.desc.length?'▌':''),ix+8,ly);
+    if(chars>=li.desc.length){
+      ctx.fillStyle='rgba(56,189,248,0.8)'; ctx.textAlign='right';
+      ctx.fillText(`RM ${li.rate}`,ix+iw-8,ly);
+    }
+  });
+
+  // total
+  ctx.strokeStyle='rgba(56,189,248,0.2)'; ctx.lineWidth=0.8;
+  ctx.beginPath(); ctx.moveTo(ix+8,iy+92); ctx.lineTo(ix+iw-8,iy+92); ctx.stroke();
+  ctx.fillStyle='#38bdf8'; ctx.font='bold 9px monospace'; ctx.textAlign='right';
+  ctx.fillText('TOTAL: RM 5,300.00',ix+iw-8,iy+104);
+
+  // LHDN stamp
+  if(cycle>80){
+    const sp=Math.min((cycle-80)/15,1);
+    ctx.globalAlpha=sp;
+    ctx.strokeStyle='rgba(16,185,129,0.7)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(ix+iw-22,iy+50,14,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='rgba(16,185,129,0.7)'; ctx.font='bold 5px monospace'; ctx.textAlign='center';
+    ctx.fillText('LHDN',ix+iw-22,iy+48); ctx.fillText('e-INV',ix+iw-22,iy+56);
+    ctx.globalAlpha=1;
+  }
+
+  // right panel — status
+  const rx=ix+iw+12, ry=iy, rw=w-rx-8;
+  const statusItems=[
+    {label:'DRAFT',    color:'#94a3b8',done:true},
+    {label:'SENT',     color:'#38bdf8',done:cycle>30},
+    {label:'VIEWED',   color:'#a78bfa',done:cycle>55},
+    {label:'PAID',     color:'#10b981',done:cycle>90},
+  ];
+  statusItems.forEach((s,i)=>{
+    const sy2=ry+10+i*28;
+    const pulse=s.done?0.7+0.3*Math.sin(t*0.06+i):0.3;
+    ctx.beginPath(); ctx.arc(rx+8,sy2+8,5,0,Math.PI*2);
+    ctx.fillStyle=`${s.color}${s.done?'ff':'44'}`; ctx.fill();
+    if(i<statusItems.length-1){
+      ctx.strokeStyle=`rgba(255,255,255,0.1)`; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(rx+8,sy2+13); ctx.lineTo(rx+8,sy2+28); ctx.stroke();
+    }
+    ctx.fillStyle=s.done?s.color:'rgba(148,163,184,0.3)';
+    ctx.font=`${s.done?'bold ':''}7px monospace`; ctx.textAlign='left';
+    ctx.fillText(s.label,rx+18,sy2+12);
+  });
+
+  ctx.fillStyle='#38bdf8'; ctx.font='bold 12px Inter,sans-serif'; ctx.textAlign='center';
+  ctx.fillText('SMART INVOICING SYSTEM',w/2,h-14);
+}
+
+/* ────────────────────────────────────────────────────────── *
+ * NEW-6. SUPER APP — icon grid with service activity pulses  *
+ * ────────────────────────────────────────────────────────── */
+function drawSuperApp(ctx, w, h, t) {
+  const bg=ctx.createLinearGradient(0,0,w,h);
+  bg.addColorStop(0,'#060d1f'); bg.addColorStop(1,'#0f1635');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+
+  const services=[
+    {label:'eWallet',  icon:'💳', color:'#38bdf8', x:32,  y:22},
+    {label:'Food',     icon:'🍜', color:'#fb923c', x:96,  y:22},
+    {label:'Ride',     icon:'🚗', color:'#34d399', x:160, y:22},
+    {label:'Bills',    icon:'💡', color:'#facc15', x:224, y:22},
+    {label:'Shop',     icon:'🛍️', color:'#f472b6', x:32,  y:86},
+    {label:'Rewards',  icon:'⭐', color:'#fbbf24', x:96,  y:86},
+    {label:'News',     icon:'📰', color:'#818cf8', x:160, y:86},
+    {label:'Mini App', icon:'⚙️', color:'#2dd4bf', x:224, y:86},
+  ];
+  const activeIdx=Math.floor((t*0.015)%services.length);
+
+  services.forEach((s,i)=>{
+    const active=i===activeIdx;
+    const pulse=active?0.8+0.2*Math.sin(t*0.15):0.5+0.2*Math.sin(t*0.04+i);
+    ctx.shadowColor=s.color; ctx.shadowBlur=active?20:6;
+    roundRect(ctx,s.x-20,s.y,40,48,10);
+    ctx.fillStyle=active?`${s.color}25`:`rgba(255,255,255,0.05)`; ctx.fill();
+    ctx.strokeStyle=`${s.color}${Math.floor(pulse*200).toString(16).padStart(2,'0')}`; ctx.lineWidth=active?1.8:0.8; ctx.stroke();
+    ctx.shadowBlur=0;
+    ctx.font='18px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(s.icon,s.x,s.y+26);
+    ctx.fillStyle=active?s.color:'rgba(148,163,184,0.55)';
+    ctx.font=`${active?'bold ':''}6px monospace`;
+    ctx.fillText(s.label,s.x,s.y+44);
+    // notification dot on active
+    if(active){
+      ctx.beginPath(); ctx.arc(s.x+14,s.y+4,5,0,Math.PI*2);
+      ctx.fillStyle='#f43f5e'; ctx.fill();
+      ctx.fillStyle='#fff'; ctx.font='bold 7px monospace'; ctx.textAlign='center';
+      ctx.fillText('!',s.x+14,s.y+8);
+    }
+  });
+
+  // bottom balance bar
+  const bal=(1250.80+Math.sin(t*0.02)*8).toFixed(2);
+  roundRect(ctx,10,h-44,w-20,28,6);
+  ctx.fillStyle='rgba(56,189,248,0.08)'; ctx.fill();
+  ctx.strokeStyle='rgba(56,189,248,0.2)'; ctx.lineWidth=1; ctx.stroke();
+  ctx.fillStyle='rgba(148,163,184,0.5)'; ctx.font='7px monospace'; ctx.textAlign='left';
+  ctx.fillText('eWallet Balance',16,h-26);
+  ctx.fillStyle='#38bdf8'; ctx.font='bold 10px monospace'; ctx.textAlign='right';
+  ctx.fillText(`RM ${bal}`,w-14,h-26);
+
+  ctx.fillStyle='#38bdf8'; ctx.font='bold 12px Inter,sans-serif'; ctx.textAlign='center';
+  ctx.fillText('SUPER APP PLATFORM',w/2,h-14);
+}
+
+/* ────────────────────────────────────────────────────────── *
+ * NEW-7. NEWS APP MCP — AI agent fetch → summarise → alert  *
+ * ────────────────────────────────────────────────────────── */
+function drawNewsMCP(ctx, w, h, t) {
+  const bg=ctx.createLinearGradient(0,0,w,h);
+  bg.addColorStop(0,'#060518'); bg.addColorStop(1,'#0d0a28');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+
+  // MCP pipeline: Fetch → Analyse → Summarise → Alert
+  const steps=[
+    {label:'FETCH',   color:'#38bdf8', icon:'🌐'},
+    {label:'ANALYSE', color:'#a78bfa', icon:'🔍'},
+    {label:'SUMMARY', color:'#34d399', icon:'✍️'},
+    {label:'ALERT',   color:'#fb923c', icon:'🔔'},
+  ];
+  const activeStep=Math.floor((t*0.01)%steps.length);
+  const sw=(w-20)/steps.length;
+  steps.forEach((s,i)=>{
+    const sx=10+i*sw, sy=14;
+    const active=i===activeStep;
+    const pulse=active?0.8+0.2*Math.sin(t*0.12):0.4;
+    ctx.shadowColor=s.color; ctx.shadowBlur=active?14:4;
+    roundRect(ctx,sx+3,sy,sw-6,36,6);
+    ctx.fillStyle=active?`${s.color}20`:`rgba(255,255,255,0.03)`; ctx.fill();
+    ctx.strokeStyle=`${s.color}${Math.floor(pulse*180).toString(16).padStart(2,'0')}`; ctx.lineWidth=active?1.5:0.7; ctx.stroke();
+    ctx.shadowBlur=0;
+    ctx.font='12px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(s.icon,sx+sw/2,sy+18);
+    ctx.fillStyle=active?s.color:'rgba(148,163,184,0.4)'; ctx.font=`${active?'bold ':''}6px monospace`;
+    ctx.fillText(s.label,sx+sw/2,sy+32);
+    if(i<steps.length-1){
+      const dotT=((t*0.01+0.001)%steps.length-i);
+      if(dotT>0&&dotT<1){
+        const dpx=sx+sw-6+dotT*8, dpy=sy+18;
+        ctx.beginPath(); ctx.arc(dpx,dpy,2.5,0,Math.PI*2);
+        ctx.fillStyle=s.color; ctx.fill();
+      }
+    }
+  });
+
+  // news feed cards
+  const headlines=[
+    {src:'BBC',   text:'AI Regulation Bill passes Senate...', tag:'TECH',  color:'#38bdf8'},
+    {src:'CNA',   text:'BTC surges past $80K resistance...', tag:'CRYPTO', color:'#facc15'},
+    {src:'CNBC',  text:'Fed holds rates, markets react...', tag:'FINANCE',color:'#34d399'},
+  ];
+  headlines.forEach((n,i)=>{
+    const ny=58+i*34;
+    const slideT=clamp(t*0.012-i*0.25,0,1);
+    const ox=(1-easeInOut(slideT))*w;
+    ctx.fillStyle='rgba(255,255,255,0.04)';
+    roundRect(ctx,10+ox,ny,w-20,28,5); ctx.fill();
+    ctx.strokeStyle=`${n.color}30`; ctx.lineWidth=0.8;
+    roundRect(ctx,10+ox,ny,w-20,28,5); ctx.stroke();
+    // source badge
+    roundRect(ctx,14+ox,ny+6,24,14,3);
+    ctx.fillStyle=`${n.color}25`; ctx.fill();
+    ctx.fillStyle=n.color; ctx.font='bold 6px monospace'; ctx.textAlign='center';
+    ctx.fillText(n.src,26+ox,ny+16);
+    // headline
+    ctx.fillStyle='rgba(255,255,255,0.75)'; ctx.font='6.5px Inter'; ctx.textAlign='left';
+    ctx.fillText(n.text.slice(0,36),42+ox,ny+12);
+    // AI badge
+    ctx.fillStyle='rgba(167,139,250,0.2)';
+    roundRect(ctx,w-50+ox,ny+6,38,14,3); ctx.fill();
+    ctx.fillStyle='#a78bfa'; ctx.font='bold 5px monospace'; ctx.textAlign='center';
+    ctx.fillText('✨ AI BRIEF',w-31+ox,ny+15);
+  });
+
+  ctx.fillStyle='#a78bfa'; ctx.font='bold 12px Inter,sans-serif'; ctx.textAlign='center';
+  ctx.fillText('AI NEWS APP · MCP SERVICES',w/2,h-14);
+}
+
 /* ── project → draw function map ─────────────────────────── */
 const DRAW_FN = {
-  'trading-platform':       drawTrading,
-  'crypto-exchange':        drawCryptoExchange,
-  'icp-dapp':               drawICP,
-  'nft-marketplace':        drawNFT,
-  'mywallet':               drawWallet,
-  'erp-system':             drawERP,
-  'blockchain-ecommerce':   drawEcommerce,
-  'smart-contracts':        drawSmartContracts,
-  'mobile-apps':            drawMobileApps,
-  'ai-trading-signal':      drawAITradingSignal,
+  'trading-platform':          drawTrading,
+  'crypto-exchange':           drawCryptoExchangeV2,
+  'icp-dapp':                  drawICP,
+  'nft-marketplace':           drawNFT,
+  'mywallet':                  drawWallet,
+  'erp-system':                drawERP,
+  'blockchain-ecommerce':      drawEcommerce,
+  'smart-contracts':           drawSmartContracts,
+  'mobile-apps':               drawMobileApps,
+  'ai-trading-signal':         drawAITradingSignal,
   'ai-smart-contract-auditor': drawAIAuditor,
-  'ai-blockchain-analytics': drawAIAnalytics,
+  'ai-blockchain-analytics':   drawAIAnalytics,
+  'traditional-ecommerce':     drawEcommerceTraditional,
+  'rewarding-system':          drawRewards,
+  'shopping-cart':             drawShoppingCart,
+  'kopitiam-system':           drawKopitiam,
+  'invoicing-system':          drawInvoicing,
+  'super-app':                 drawSuperApp,
+  'news-mcp':                  drawNewsMCP,
 };
 
 /* ── main component ──────────────────────────────────────── */
