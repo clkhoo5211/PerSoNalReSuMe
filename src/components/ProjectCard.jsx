@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import Tilt from 'react-parallax-tilt';
 import { Player } from '@remotion/player';
 import ProjectAnimation from './remotion/ProjectAnimation';
+import ProjectMediaViewer from './ProjectMediaViewer';
 import Modal from './Modal';
 import './ProjectCard.css';
 
@@ -79,6 +80,7 @@ export default function ProjectCard({ project, index }) {
 
       {open && (
         <Modal onClose={() => setOpen(false)}>
+          <ProjectMediaViewer project={project} />
           <h2 className="modal-title">{project.title}</h2>
           <div className="modal-meta">
             <span className="tag">{project.category}</span>
