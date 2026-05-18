@@ -34,18 +34,20 @@
   gap: 6px;
   padding: 6px 14px 6px 10px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.09);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(56,189,248,0.06);
+  border: 1px solid rgba(56,189,248,0.22);
   text-decoration: none;
-  color: var(--text-muted);
+  color: var(--text);
   font-size: 12px;
   font-weight: 600;
-  transition: border-color .2s, background .2s, color .2s;
+  transition: border-color .2s, background .2s, color .2s, box-shadow .2s;
+  box-shadow: 0 0 8px rgba(56,189,248,0.10);
 }
 .lt-pill:hover {
-  border-color: rgba(56,189,248,0.4);
-  background: rgba(56,189,248,0.07);
+  border-color: rgba(56,189,248,0.6);
+  background: rgba(56,189,248,0.13);
   color: var(--primary);
+  box-shadow: 0 0 16px rgba(56,189,248,0.25);
 }
 .lt-pill-icon { font-size: 15px; line-height: 1; }
 .lt-pill-label { letter-spacing: .3px; }
@@ -74,24 +76,59 @@
   font-size: 12px;
   font-weight: 600;
   text-decoration: none;
-  color: var(--text-muted);
-  background: rgba(255,255,255,0.09);
-  border: 1px solid rgba(255,255,255,0.08);
-  transition: border-color .2s, background .2s, color .2s;
+  color: var(--text);
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.18);
+  transition: border-color .2s, background .2s, color .2s, box-shadow .2s;
+  box-shadow: 0 0 7px rgba(255,255,255,0.06);
 }
 .lt-action:hover {
-  border-color: rgba(56,189,248,0.35);
-  background: rgba(56,189,248,0.07);
+  border-color: rgba(56,189,248,0.5);
+  background: rgba(56,189,248,0.10);
   color: var(--text);
+  box-shadow: 0 0 14px rgba(56,189,248,0.20);
 }
 .lt-action.primary {
   color: var(--primary);
-  border-color: rgba(56,189,248,0.3);
-  background: rgba(56,189,248,0.08);
+  border-color: rgba(56,189,248,0.45);
+  background: rgba(56,189,248,0.10);
+  box-shadow: 0 0 12px rgba(56,189,248,0.18);
 }
 .lt-action.primary:hover {
-  background: rgba(56,189,248,0.16);
+  background: rgba(56,189,248,0.20);
   border-color: var(--primary);
+  box-shadow: 0 0 20px rgba(56,189,248,0.30);
+}
+
+/* Light mode — darken borders/text so buttons are visible on pale bg */
+body.light .lt-pill {
+  background: rgba(3,105,161,0.07);
+  border-color: rgba(3,105,161,0.30);
+  color: #0369a1;
+  box-shadow: 0 0 8px rgba(3,105,161,0.12);
+}
+body.light .lt-pill:hover {
+  background: rgba(3,105,161,0.14);
+  border-color: rgba(3,105,161,0.55);
+  box-shadow: 0 0 16px rgba(3,105,161,0.22);
+}
+body.light .lt-action {
+  background: rgba(15,23,42,0.05);
+  border-color: rgba(15,23,42,0.22);
+  color: #1e293b;
+  box-shadow: none;
+}
+body.light .lt-action:hover {
+  background: rgba(3,105,161,0.08);
+  border-color: rgba(3,105,161,0.45);
+  color: #0369a1;
+  box-shadow: 0 0 12px rgba(3,105,161,0.15);
+}
+body.light .lt-action.primary {
+  color: #0369a1;
+  border-color: rgba(3,105,161,0.45);
+  background: rgba(3,105,161,0.08);
+  box-shadow: 0 0 10px rgba(3,105,161,0.14);
 }
 
 @media (max-width: 480px) {
