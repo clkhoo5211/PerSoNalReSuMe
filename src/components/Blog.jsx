@@ -2,11 +2,69 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { posts } from '../data/blog';
-import Modal from './Modal';
 import './Blog.css';
 
+const TAG_COLORS = {
+  'MCP': '#38bdf8',
+  'AI': '#a78bfa',
+  'Tutorial': '#34d399',
+  'Web3': '#f472b6',
+  'Security': '#fb923c',
+  'Solidity': '#818cf8',
+  'React': '#38bdf8',
+  'Performance': '#facc15',
+  'Architecture': '#34d399',
+};
+
+function BlogCard({ post, featured = false, index = 0 }) {
+  const accentColor = TAG_COLORS[post.tags[0]] || '#38bdf8';
+
+  return (
+    <motion.article
+      className={`bc${featured ? ' bc-featured' : ''}`}
+      style={{ '--accent-color': accentColor }}
+      initial={{ opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.1 }}
+      transition={{ delay: index * 0.08, duration: 0.42 }}
+      whileHover={{ y: -4 }}
+    >
+      {/* Top accent bar */}
+      <div className="bc-accent-bar" />
+
+      {featured && <div className="bc-featured-badge">✦ Featured</div>}
+
+      <div className="bc-inner">
+        <div className="bc-meta">
+          <time className="bc-date">{post.date}</time>
+          <span className="bc-dot">·</span>
+          <span className="bc-readtime">⏱ {post.readTime}</span>
+        </div>
+
+        <h3 className={`bc-title${featured ? ' bc-title-lg' : ''}`}>{post.title}</h3>
+        <p className="bc-summary">{post.summary}</p>
+
+        <div className="bc-footer">
+          <div className="bc-tags">
+            {post.tags.map(t => (
+              <span key={t} className="bc-tag" style={{ '--tc': TAG_COLORS[t] || '#38bdf8' }}>{t}</span>
+            ))}
+          </div>
+          <Link
+            to={`/blog/${post.id}`}
+            className="bc-btn"
+            onClick={e => e.stopPropagation()}
+          >
+            Read {featured ? 'Article' : 'More'} →
+          </Link>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
 export default function Blog() {
-  const [selected, setSelected] = useState(null);
+  const [featured, ...rest] = posts;
 
   return (
     <section id="blog" className="section">
@@ -16,50 +74,27 @@ export default function Blog() {
         viewport={{ once: true, amount: 0.1 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="section-title">Blog</h2>
-
-        <div className="blog-list">
-          {posts.map((post, i) => (
-            <motion.article
-              key={post.id}
-              className="blog-card card"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.07 }}
-              onClick={() => setSelected(post)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={e => e.key === 'Enter' && setSelected(post)}
-            >
-              <div className="blog-meta">
-                <time>{post.date}</time>
-                <span className="blog-readtime">· {post.readTime}</span>
-              </div>
-              <h3 className="blog-title">{post.title}</h3>
-              <p className="blog-summary">{post.summary}</p>
-              <div className="blog-tags">
-                {post.tags.map(t => <span key={t} className="tag tag-secondary">{t}</span>)}
-              </div>
-              <Link to={`/blog/${post.id}`} className="blog-read-more" onClick={e => e.stopPropagation()}>Read More →</Link>
-            </motion.article>
-          ))}
+        <div className="blog-header-row">
+          <h2 className="section-title" style={{ marginBottom: 0 }}>Blog</h2>
+          <span className="blog-header-note">Thoughts on Blockchain · AI · Web3</span>
         </div>
-      </motion.div>
 
-      {selected && (
-        <Modal onClose={() => setSelected(null)}>
-          <div className="blog-modal-meta">
-            <time>{selected.date}</time>
-            <span>· {selected.readTime}</span>
+        {/* Featured post */}
+        {featured && (
+          <div className="blog-featured-wrap">
+            <BlogCard post={featured} featured index={0} />
           </div>
-          <h2 className="modal-title">{selected.title}</h2>
-          <div className="blog-tags" style={{ marginBottom: 'var(--space-md)' }}>
-            {selected.tags.map(t => <span key={t} className="tag tag-secondary">{t}</span>)}
+        )}
+
+        {/* Remaining posts grid */}
+        {rest.length > 0 && (
+          <div className="blog-grid">
+            {rest.map((post, i) => (
+              <BlogCard key={post.id} post={post} index={i + 1} />
+            ))}
           </div>
-          <p style={{ color: 'var(--text-muted)', lineHeight: 1.8 }}>{selected.content}</p>
-        </Modal>
-      )}
+        )}
+      </motion.div>
     </section>
   );
 }

@@ -21,7 +21,7 @@ export const profile = {
   links: [
     { label: 'View Projects',     url: '#projects', icon: '🚀', primary: true },
     { label: 'Read Blog',         url: '#blog',     icon: '✍️' },
-    { label: 'Download Resume',   url: '#',         icon: '📄' },
+    { label: 'Download Resume',   url: '/PerSoNalReSuMe/KCL_CV_Resume_v1_corrected.pdf', icon: '📄' },
     { label: 'Book a Call',       url: '#contact',  icon: '📞' },
     { label: 'GitHub Profile',    url: 'https://github.com/clkhoo5211',             icon: '🐙' },
     { label: 'LinkedIn',          url: 'https://www.linkedin.com/in/khoochenglong/', icon: '💼' },
@@ -55,7 +55,7 @@ export const profile = {
       role: 'Chief Information Officer',
       company: 'Iota Technologies Sdn. Bhd.',
       location: 'Malaysia',
-      period: '2008 – Present',
+      period: '2018 – Present',
       description: 'Spearheaded advanced blockchain solutions including smart contracts for Blockchain Product Tracking technology. Secured and executed the Dfinity Developer Grant Programme (Grant ID: 22531594), delivering in Nov 2022. Led cross-platform development, front-end engineering with Vue.js, and built DApps using Motoko for Internet Computer.',
     },
     {
