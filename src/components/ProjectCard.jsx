@@ -52,7 +52,7 @@ export default function ProjectCard({ project, index }) {
                 durationInFrames={150}
                 fps={30}
                 inputProps={inputProps}
-                style={{ width: '100%', borderRadius: '8px 8px 0 0' }}
+                style={{ width: '100%', height: '200px', display: 'block', borderRadius: '8px 8px 0 0', background: '#060d1f' }}
                 autoPlay
                 loop
                 muted

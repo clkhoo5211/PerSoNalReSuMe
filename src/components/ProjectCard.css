@@ -1,5 +1,26 @@
 .project-card { padding: 0; overflow: hidden; }
-.project-media { position: relative; }
+.project-media {
+  position: relative;
+  background: #060d1f;
+  min-height: 200px;
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+}
+
+/* Ensure Remotion Player iframe fills the container and is always visible */
+.project-media > div,
+.project-media > div > div {
+  display: block !important;
+  visibility: visible !important;
+}
+
+.project-media canvas,
+.project-media video,
+.project-media iframe {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
 .project-category-badge {
   position: absolute;
   top: 10px;
