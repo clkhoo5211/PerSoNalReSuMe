@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { profile } from '../data/profile';
 import ParticleField from './ParticleField';
+import MagneticButton from './MagneticButton';
 import './Hero.css';
 
 export default function Hero() {
@@ -48,7 +49,7 @@ export default function Hero() {
           transition={{ duration: 0.7, ease: 'easeOut' }}
         >
           <span className="hero-greeting">Hi, I'm</span>
-          <h1 className="hero-name">{profile.name}</h1>
+          <h1 className="hero-name glitch-name" data-text={profile.name}>{profile.name}</h1>
           <p className="hero-title">{profile.title}</p>
           <p className="hero-tagline">
             <span className="tagline-text">{displayed}</span>
@@ -56,14 +57,20 @@ export default function Hero() {
           </p>
           <p className="hero-bio">{profile.bio}</p>
           <div className="hero-cta">
-            <a href="#projects" className="btn btn-primary">View Projects</a>
-            <a href="#contact" className="btn btn-outline">Get In Touch</a>
+            <MagneticButton>
+              <a href="#projects" className="btn btn-primary">View Projects</a>
+            </MagneticButton>
+            <MagneticButton>
+              <a href="#contact" className="btn btn-outline">Get In Touch</a>
+            </MagneticButton>
           </div>
           <div className="hero-social">
             {profile.social.map(s => (
-              <a key={s.label} href={s.url} target="_blank" rel="noopener noreferrer" className="social-link" title={s.label}>
-                {s.icon}
-              </a>
+              <MagneticButton key={s.label} strength={0.5}>
+                <a href={s.url} target="_blank" rel="noopener noreferrer" className="social-link" title={s.label}>
+                  {s.icon}
+                </a>
+              </MagneticButton>
             ))}
           </div>
         </motion.div>

@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import Tilt from 'react-parallax-tilt';
 import { Player } from '@remotion/player';
 import ProjectAnimation from './remotion/ProjectAnimation';
 import Modal from './Modal';
@@ -16,49 +17,65 @@ export default function ProjectCard({ project, index }) {
 
   return (
     <>
-      <motion.article
-        className="project-card card"
+      <motion.div
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.15 }}
         transition={{ delay: index * 0.08, duration: 0.4 }}
-        onClick={() => setOpen(true)}
-        role="button"
-        tabIndex={0}
-        onKeyDown={e => e.key === 'Enter' && setOpen(true)}
       >
-        <div className="project-media">
-          <Player
-            component={ProjectAnimation}
-            compositionWidth={400}
-            compositionHeight={220}
-            durationInFrames={150}
-            fps={30}
-            inputProps={inputProps}
-            style={{ width: '100%', borderRadius: '8px 8px 0 0' }}
-            autoPlay
-            loop
-            muted
-            controls={false}
-            clickToPlay={false}
-          />
-          <div className="project-category-badge">
-            <span className="tag">{project.category}</span>
-            <span className={`status-dot status-${project.status.toLowerCase().replace(/\s/g, '-')}`}>{project.status}</span>
-          </div>
-        </div>
+        <Tilt
+          tiltMaxAngleX={10}
+          tiltMaxAngleY={10}
+          perspective={1000}
+          scale={1.02}
+          transitionSpeed={500}
+          glareEnable
+          glareMaxOpacity={0.12}
+          glareColor="rgba(56,189,248,0.6)"
+          glareBorderRadius="20px"
+          tiltEnable
+        >
+          <article
+            className="project-card card"
+            onClick={() => setOpen(true)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={e => e.key === 'Enter' && setOpen(true)}
+          >
+            <div className="project-media">
+              <Player
+                component={ProjectAnimation}
+                compositionWidth={400}
+                compositionHeight={220}
+                durationInFrames={150}
+                fps={30}
+                inputProps={inputProps}
+                style={{ width: '100%', borderRadius: '8px 8px 0 0' }}
+                autoPlay
+                loop
+                muted
+                controls={false}
+                clickToPlay={false}
+              />
+              <div className="project-category-badge">
+                <span className="tag">{project.category}</span>
+                <span className={`status-dot status-${project.status.toLowerCase().replace(/\s/g, '-')}`}>{project.status}</span>
+              </div>
+            </div>
 
-        <div className="project-body">
-          <h3 className="project-title">{project.title}</h3>
-          <p className="project-desc">{project.description}</p>
-          <div className="project-tech">
-            {project.tech.slice(0, 4).map(t => (
-              <span key={t} className="tag tag-secondary">{t}</span>
-            ))}
-            {project.tech.length > 4 && <span className="tag">+{project.tech.length - 4}</span>}
-          </div>
-        </div>
-      </motion.article>
+            <div className="project-body">
+              <h3 className="project-title">{project.title}</h3>
+              <p className="project-desc">{project.description}</p>
+              <div className="project-tech">
+                {project.tech.slice(0, 4).map(t => (
+                  <span key={t} className="tag tag-secondary">{t}</span>
+                ))}
+                {project.tech.length > 4 && <span className="tag">+{project.tech.length - 4}</span>}
+              </div>
+            </div>
+          </article>
+        </Tilt>
+      </motion.div>
 
       {open && (
         <Modal onClose={() => setOpen(false)}>

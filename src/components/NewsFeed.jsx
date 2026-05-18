@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import useSWR from 'swr';
 import { motion } from 'framer-motion';
 import { saveToCache, loadFromCache } from '../hooks/useNewsCache';
+import AnimatedTitle from './AnimatedTitle';
 import './NewsFeed.css';
 
 const CACHE_KEY = 'hn-ai-news-v1';
@@ -69,7 +70,7 @@ export default function NewsFeed() {
         transition={{ duration: 0.5 }}
       >
         <div className="news-header">
-          <h2 className="section-title">AI News Feed</h2>
+          <AnimatedTitle>AI News Feed</AnimatedTitle>
           {isValidating && <span className="news-refresh-dot" title="Refreshing..." />}
         </div>
 

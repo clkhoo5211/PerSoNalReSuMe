@@ -1,0 +1,58 @@
+/* Hide default cursor site-wide when custom cursor is active */
+@media (hover: hover) and (pointer: fine) {
+  html { cursor: none !important; }
+  * { cursor: none !important; }
+}
+
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 99999;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity .3s;
+  will-change: transform;
+}
+
+.cursor-dot {
+  width: 6px; height: 6px;
+  background: var(--primary);
+  margin: -3px 0 0 -3px;
+  transition: opacity .3s, width .2s, height .2s, background .2s;
+}
+
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1.5px solid rgba(56,189,248,0.6);
+  margin: -18px 0 0 -18px;
+  transition: opacity .3s, width .25s cubic-bezier(.4,0,.2,1), height .25s cubic-bezier(.4,0,.2,1), border-color .25s;
+  backdrop-filter: invert(0%);
+}
+
+.cursor-dot.visible,
+.cursor-ring.visible { opacity: 1; }
+
+/* Click state */
+.cursor-dot.clicked  { width: 10px; height: 10px; margin: -5px 0 0 -5px; background: var(--accent); }
+.cursor-ring.clicked { width: 28px; height: 28px; margin: -14px 0 0 -14px; border-color: var(--accent); }
+
+/* Hover state — ring expands, dot hides */
+.cursor-dot.hovered  { width: 0; height: 0; opacity: 0; }
+.cursor-ring.hovered {
+  width: 52px; height: 52px;
+  margin: -26px 0 0 -26px;
+  border-color: var(--primary);
+  background: rgba(56,189,248,0.06);
+}
+
+/* Light mode */
+body.light .cursor-ring { border-color: rgba(14,165,233,0.55); }
+
+/* Touch / no-hover — restore cursor and hide custom */
+@media (hover: none), (pointer: coarse) {
+  html { cursor: auto !important; }
+  * { cursor: auto !important; }
+  .cursor-dot, .cursor-ring { display: none; }
+}

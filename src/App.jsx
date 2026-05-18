@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -9,28 +9,17 @@ import NewsFeed from './components/NewsFeed';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import MediaPlayer from './components/MediaPlayer';
+import CustomCursor from './components/CustomCursor';
 
 export default function App() {
   const [theme, setTheme] = useState(() =>
     localStorage.getItem('theme') || 'dark'
   );
-  const spotlightRef = useRef(null);
 
   useEffect(() => {
     document.body.classList.toggle('light', theme === 'light');
     localStorage.setItem('theme', theme);
   }, [theme]);
-
-  useEffect(() => {
-    const el = spotlightRef.current;
-    if (!el) return;
-    const move = (e) => {
-      el.style.left = e.clientX + 'px';
-      el.style.top  = e.clientY + 'px';
-    };
-    window.addEventListener('mousemove', move);
-    return () => window.removeEventListener('mousemove', move);
-  }, []);
 
   useEffect(() => {
     const handleCardMouseMove = (e) => {
@@ -54,7 +43,7 @@ export default function App() {
 
   return (
     <>
-      <div ref={spotlightRef} className="cursor-spotlight" />
+      <CustomCursor />
       <Navbar theme={theme} onThemeToggle={toggleTheme} />
       <main>
         <Hero />

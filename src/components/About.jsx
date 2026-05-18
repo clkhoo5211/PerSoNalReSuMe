@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { profile } from '../data/profile';
+import AnimatedTitle from './AnimatedTitle';
 import './About.css';
 
 export default function About() {
@@ -11,7 +12,7 @@ export default function About() {
         viewport={{ once: true, amount: 0.15 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="section-title">About Me</h2>
+        <AnimatedTitle>About Me</AnimatedTitle>
 
         <div className="about-grid">
           <div className="about-bio">

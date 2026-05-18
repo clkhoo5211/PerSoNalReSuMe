@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { projects, categories } from '../data/projects';
 import ProjectCard from './ProjectCard';
+import AnimatedTitle from './AnimatedTitle';
 import './Projects.css';
 
 export default function Projects() {
@@ -19,7 +20,7 @@ export default function Projects() {
         viewport={{ once: true, amount: 0.1 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="section-title">Projects</h2>
+        <AnimatedTitle>Projects</AnimatedTitle>
 
         <div className="filter-bar">
           {categories.map(cat => (

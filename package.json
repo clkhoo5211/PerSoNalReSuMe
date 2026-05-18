@@ -16,6 +16,7 @@
     "framer-motion": "^12.38.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "react-parallax-tilt": "^1.7.328",
     "remotion": "^4.0.462",
     "swiper": "^12.1.4",
     "swr": "^2.4.1"
