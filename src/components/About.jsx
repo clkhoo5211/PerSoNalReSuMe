@@ -77,10 +77,10 @@ function TimelineItem({ exp, index, isLast }) {
           {open && (
             <motion.div
               className="tl-body"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.28, ease: 'easeInOut' }}
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
             >
               <p className="tl-desc">{exp.description}</p>
               {tags.length > 0 && (
