@@ -1,7 +1,14 @@
 .linktree-section {
-  padding: 28px var(--space-xl) !important;
+  padding: 28px var(--space-xl);
   display: flex;
   justify-content: center;
+  background: var(--section-bg);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--border);
+  margin: var(--sp-xl) auto;
+  max-width: 1260px;
 }
 
 .lt-strip {
