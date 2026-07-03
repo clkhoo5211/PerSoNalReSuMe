@@ -1,8 +1,9 @@
 name: Daily Blog Post
 
 on:
-  schedule:
-    - cron: '7 2 * * *'   # 02:07 UTC = 10:07 AM Malaysia time (UTC+8)
+  # schedule disabled — re-enable by uncommenting when ANTHROPIC_API_KEY secret is added
+  # schedule:
+  #   - cron: '7 2 * * *'   # 02:07 UTC = 10:07 AM Malaysia time (UTC+8)
   workflow_dispatch:
 
 permissions:
