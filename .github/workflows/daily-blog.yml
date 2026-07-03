@@ -1,0 +1,48 @@
+name: Daily Blog Post
+
+on:
+  schedule:
+    - cron: '7 2 * * *'   # 02:07 UTC = 10:07 AM Malaysia time (UTC+8)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: daily-blog
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate post
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/generate-blog-post.mjs
+
+      - name: Commit and push
+        run: |
+          git config user.name "blog-bot"
+          git config user.email "actions@github.com"
+          git add public/blog.json
+          if git diff --cached --quiet; then
+            echo "No new post — nothing to commit."
+            exit 0
+          fi
+          git commit -m "feat: daily blog post $(date -u +%F)"
+          git push
+
+      - name: Trigger site deploy
+        # pushes made with GITHUB_TOKEN don't fire on:push workflows — dispatch deploy explicitly
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --repo ${{ github.repository }} || true
