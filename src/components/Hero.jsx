@@ -1,8 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { profile } from '../data/profile';
 import ParticleField from './ParticleField';
 import MagneticButton from './MagneticButton';
+import Hero3D from './Hero3D';
 import './Hero.css';
 
 export default function Hero() {
@@ -38,8 +39,16 @@ export default function Hero() {
     }
   }, [typing, taglineIndex, displayed]);
 
+  // scroll choreography — text and visual leave at different depths
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] });
+  const textY    = useTransform(scrollYProgress, [0, 1], [0, -120]);
+  const visualY  = useTransform(scrollYProgress, [0, 1], [0, -260]);
+  const fadeOut  = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
+  const visualScale = useTransform(scrollYProgress, [0, 1], [1, 0.88]);
+
   return (
-    <section id="hero" className="hero-section">
+    <section id="hero" className="hero-section" ref={sectionRef}>
       <ParticleField />
       <div className="hero-content section">
         <motion.div
@@ -47,6 +56,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
+          style={{ y: textY, opacity: fadeOut }}
         >
           <span className="hero-greeting">Hi, I'm</span>
           <h1 className="hero-name glitch-name" data-text={profile.name}>{profile.name}</h1>
@@ -58,10 +68,10 @@ export default function Hero() {
           <p className="hero-bio">{profile.bio}</p>
           <div className="hero-cta">
             <MagneticButton>
-              <button className="btn btn-primary" onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}>View Projects</button>
+              <button className="btn btn-primary" onClick={() => { const el = document.getElementById('projects'); if (el) window.__lenis ? window.__lenis.scrollTo(el, { offset: -70 }) : el.scrollIntoView({ behavior: 'smooth' }); }}>View Projects</button>
             </MagneticButton>
             <MagneticButton>
-              <button className="btn btn-outline" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>Get In Touch</button>
+              <button className="btn btn-outline" onClick={() => { const el = document.getElementById('contact'); if (el) window.__lenis ? window.__lenis.scrollTo(el, { offset: -70 }) : el.scrollIntoView({ behavior: 'smooth' }); }}>Get In Touch</button>
             </MagneticButton>
           </div>
           <div className="hero-social">
@@ -80,8 +90,10 @@ export default function Hero() {
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.25, ease: 'easeOut' }}
+          style={{ y: visualY, opacity: fadeOut, scale: visualScale }}
         >
           <div className="hero-glow" />
+          <Hero3D />
           <div className="hero-terminal">
             <div className="terminal-titlebar">
               <div className="terminal-dot dot-red" />

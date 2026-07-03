@@ -42,6 +42,10 @@ body.light {
 }
 
 html { scroll-behavior: smooth; }
+/* Lenis weighted scrolling — native smooth must yield while lenis drives */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
 body {
   font-family: 'Inter', system-ui, sans-serif;
   background: #080c14;   /* fallback — canvas paints over this instantly */

@@ -3,6 +3,8 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
 import BackgroundCanvas from './components/BackgroundCanvas';
+import SmoothScroll from './components/SmoothScroll';
+import ScrollProgress from './components/ScrollProgress';
 import { motion } from 'framer-motion';
 import { getTodayTheme } from './data/dayThemes';
 
@@ -114,6 +116,8 @@ export default function App() {
 
   return (
     <>
+      <SmoothScroll />
+      <ScrollProgress />
       <BackgroundCanvas theme={theme} dayPalette={dayTheme.canvas} dayIndex={new Date().getDay()} />
       <DayThemeBadge dayTheme={dayTheme} />
       <CustomCursor />

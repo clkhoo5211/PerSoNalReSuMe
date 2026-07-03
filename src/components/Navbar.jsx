@@ -13,7 +13,9 @@ const NAV_LINKS = [
 
 function scrollToId(id) {
   const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (!el) return;
+  if (window.__lenis) window.__lenis.scrollTo(el, { offset: -70, duration: 1.4 });
+  else el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 export default function Navbar({ theme, onThemeToggle }) {
